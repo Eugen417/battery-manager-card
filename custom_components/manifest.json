@@ -1,0 +1,10 @@
+{
+  "domain": "battery_manager",
+  "name": "Менеджер батареек",
+  "version": "1.0.0",
+  "documentation": "https://github.com/ВАШ_АККАУНТ/battery_manager",
+  "dependencies": [],
+  "codeowners": ["@Eugen417"],
+  "requirements": [],
+  "iot_class": "local_polling"
+}
