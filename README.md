@@ -11,12 +11,12 @@
 Дизайн карточки вдохновлен интерфейсами **Apple iOS**: эффекты матового стекла (Glassmorphism), скругленные углы (Squircles), нативные шрифты и удобный переключатель вкладок (Segmented Control).
 
 ### ✨ Возможности
-* **Автоматический поиск**: Карточка сама находит все устройства с классом `battery` и читает атрибуты от `HA-Battery-Notes`. Никакого ручного перечисления сущностей!
-* **Вкладки (Многостраничность)**: Информация разбита на удобные секции: ОБЗОР, ВНИМАНИЕ, ТИП, РАСХОД.
-* **Умная аналитика**: Высчитывает примерный расход заряда (в % за день) на основе даты последней замены батареек.
-* **Разделение типов**: Обычные батарейки отправляются в список "Срочно купить", а аккумуляторы (Rechargeable) — в "Требуется зарядка".
-* **Инвентарь**: Показывает точное количество всех используемых элементов питания в доме по типам, включая недоступные устройства.
-* **Мультиязычность**: Автоматически переводит интерфейс на язык вашего Home Assistant (RU, EN, DE, ES, FR).
+* **Автоматический поиск**: Карточка сама находит все устройства с классом `battery` и считывает атрибуты типа и количества батареек. Никакого ручного перечисления сущностей!
+* **Вкладки (Многостраничность)**: Информация разбита на секции: ОБЗОР, ВНИМАНИЕ, ТИП, РАСХОД.
+* **Умная аналитика**: Высчитывает расход заряда (в % за день) на основе даты последней замены.
+* **Разделение типов**: Обычные батарейки — в список покупок, аккумуляторы — в список на зарядку.
+* **Инвентарь**: Показывает общее количество всех используемых элементов питания в доме по типам.
+* **Мультиязычность**: Автоматически переводит интерфейс на язык системы (RU, EN, DE, ES, FR).
 
 ### 🛠 Установка
 **Вариант 1: HACS (Рекомендуется)**
@@ -25,45 +25,50 @@
 3. Вставьте ссылку на этот репозиторий: `https://github.com/Eugen417/battery-manager-card`, категория **Lovelace**.
 4. Установите `Battery Manager Card` и перезагрузите страницу (Ctrl+F5).
 
-**Вариант 2: Вручную**
-1. Скачайте `battery-manager-card.js`.
-2. Поместите его в `/config/www/battery_manager_card/battery-manager-card.js`.
-3. В Home Assistant: **Настройки** -> **Панели управления** -> **Ресурсы** -> Добавить: `/local/battery_manager_card/battery-manager-card.js` (Тип: JavaScript Module).
-
 ---
 
 ## 🇬🇧 English
 
-Modern and interactive custom Lovelace card for Home Assistant, inspired by Apple iOS design.
+A modern and interactive custom Lovelace card for Home Assistant, inspired by the Apple iOS design.
 
 ### ✨ Features
-* **Auto-discovery**: Automatically finds all `battery` class devices.
-* **Tabs**: Organized into Overview, Attention, Type, and Drain.
-* **Smart Analytics**: Calculates approximate battery drain per day.
-* **Inventory**: Shows total battery types used in your home.
-* **Multilingual**: Automatic UI translation (RU, EN, DE, ES, FR).
+* **Auto-discovery**: Automatically finds all `battery` class devices and reads attributes from `HA-Battery-Notes`.
+* **Multi-tab Interface**: Neatly organized sections: OVERVIEW, ATTENTION, TYPE, and DRAIN.
+* **Smart Analytics**: Calculates approximate battery drain (% per day).
+* **Inventory Tracking**: Shows total battery count by type currently used in your home.
+* **Native Multilingual UI**: Supports RU, EN, DE, ES, FR based on your HA profile.
+
+### 🛠 Installation (HACS)
+1. Open **HACS** -> **Frontend**.
+2. Click the three dots in the top right corner -> **Custom repositories**.
+3. Paste this repository URL: `https://github.com/Eugen417/battery-manager-card` and select **Lovelace** as the category.
+4. Find `Battery Manager Card` in HACS, install it, and refresh your browser (Ctrl+F5).
 
 ---
 
 ## 🇩🇪 Deutsch
 
-Moderne und interaktive Lovelace-Karte für Home Assistant im Apple iOS-Design.
+Moderne und interaktive Lovelace-Karte für Home Assistant, inspiriert vom Apple iOS-Design.
 
 ### ✨ Funktionen
 * **Auto-Discovery**: Findet automatisch alle Batterie-Geräte.
-* **Intelligente Analyse**: Berechnet den ungefähren Batterieverbrauch pro Tag.
-* **Bestand**: Zeigt die genaue Anzahl aller verwendeten Batterietypen.
+* **Tab-Oberfläche**: Übersicht, Achtung, Typ und Verbrauch.
+* **Bestandsaufnahme**: Zeigt die Gesamtzahl aller verwendeten Batterietypen an.
+
+### 🛠 Installation (HACS)
+1. **HACS** -> **Frontend** -> Drei Punkte -> **Benutzerdefinierte Repositories**.
+2. URL hinzufügen: `https://github.com/Eugen417/battery-manager-card`, Kategorie: **Lovelace**.
 
 ---
 
 ## 🇪🇸 Español
 
-Tarjeta Lovelace moderna e interactiva para Home Assistant con diseño estilo Apple iOS.
+Tarjeta Lovelace personalizada, moderna e interactiva para Home Assistant, estilo Apple iOS.
 
 ### ✨ Características
-* **Descubrimiento automático**: Encuentra todos los dispositivos de batería.
-* **Análisis inteligente**: Calcula el consumo aproximado de batería por día.
-* **Inventario**: Muestra el número exacto de todos los tipos de baterías.
+* **Descubrimiento automático**: Encuentra todos los dispositivos con clase `battery`.
+* **Análisis inteligente**: Calcula el consumo de batería por día.
+* **Inventario**: Muestra el número total de baterías por tipo.
 
 ---
 
@@ -72,13 +77,13 @@ Tarjeta Lovelace moderna e interactiva para Home Assistant con diseño estilo Ap
 Carte Lovelace moderne et interactive pour Home Assistant, design Apple iOS.
 
 ### ✨ Fonctionnalités
-* **Détection automatique**: Trouve tous les appareils à batterie.
-* **Analyse intelligente**: Calcule l'épuisement approximatif de la batterie par jour.
-* **Inventaire**: Affiche le nombre exact de tous les types de piles utilisés.
+* **Détection automatique**: Trouve tous les appareils de la classe `battery`.
+* **Analyse intelligente**: Calcule l'épuisement de la batterie par jour.
+* **Inventaire**: Affiche le nombre total de piles par type utilisées.
 
 ---
 
-## ⚙️ Конфигурация / Configuration (YAML)
+## ⚙️ Configuration (YAML)
 ```yaml
 type: custom:battery-manager-card
 charge_threshold: 15
