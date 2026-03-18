@@ -6,7 +6,7 @@
 
 ## 🇷🇺 Русский
 
-Современная и интерактивная карточка для Home Assistant, работающая в связке с интеграцией **HA-Battery-Notes**. Дизайн выполнен в минималистичном стиле с эффектами матового стекла и скругленными углами.
+Современная и интерактивная карточка для Home Assistant, работающая в связке с интеграцией **HA-Battery-Notes**. Дизайн выполнен в минималистичном стиле.
 
 ### ✨ Возможности
 * **Автоматический поиск**: Сама находит все устройства с классом `battery`.
@@ -37,7 +37,7 @@ drain_count: 10
 
 ## 🇬🇧 English
 
-Modern and interactive custom card for Home Assistant, designed for **HA-Battery-Notes**. Features a minimalist design with glassmorphism effects and rounded corners.
+Modern and interactive custom card for Home Assistant, designed for **HA-Battery-Notes**. Features a minimalist design.
 
 ### ✨ Features
 * **Auto-discovery**: Automatically finds all devices with the `battery` class.
@@ -68,7 +68,7 @@ drain_count: 10
 
 ## 🇩🇪 Deutsch
 
-Moderne, interaktive benutzerdefinierte Karte für Home Assistant, optimiert für **HA-Battery-Notes**. Minimalistisches Design mit Glassmorphismus-Effekten und abgerundeten Ecken.
+Moderne, interaktive benutzerdefinierte Karte für Home Assistant, optimiert für **HA-Battery-Notes**. Minimalistisches Design.
 
 ### ✨ Funktionen
 * **Auto-Discovery**: Findet automatisch alle Geräte mit der Klasse `battery`.
@@ -99,7 +99,7 @@ drain_count: 10
 
 ## 🇪🇸 Español
 
-Tarjeta interactiva moderna para Home Assistant, diseñada para **HA-Battery-Notes**. Diseño minimalista con efectos de glassmorphism y esquinas redondeadas.
+Tarjeta interactiva moderna para Home Assistant, diseñada para **HA-Battery-Notes**. Diseño minimalista.
 
 ### ✨ Características
 * **Auto-descubrimiento**: Encuentra automáticamente todos los dispositivos con la clase `battery`.
@@ -130,7 +130,7 @@ drain_count: 10
 
 ## 🇫🇷 Français
 
-Carte interactive moderne pour Home Assistant, conçue pour **HA-Battery-Notes**. Design minimaliste avec effets de glassmorphism et coins arrondis.
+Carte interactive moderne pour Home Assistant, conçue pour **HA-Battery-Notes**. Design minimaliste.
 
 ### ✨ Fonctionnalités
 * **Détection automatique**: Trouve automatiquement tous les appareils avec la classe `battery`.
