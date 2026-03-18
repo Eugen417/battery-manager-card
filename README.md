@@ -6,7 +6,7 @@
 
 ## 🇷🇺 Русский
 
-Современная и интерактивная карточка для Home Assistant, работающая в связке с интеграцией **HA-Battery-Notes**. Дизайн вдохновлен Apple iOS: эффекты матового стекла, скругленные углы и нативные шрифты.
+Современная и интерактивная карточка для Home Assistant, работающая в связке с интеграцией **HA-Battery-Notes**. Дизайн выполнен в минималистичном стиле с эффектами матового стекла и скругленными углами.
 
 ### ✨ Возможности
 * **Автоматический поиск**: Сама находит все устройства с классом `battery`.
@@ -38,7 +38,7 @@ drain_count: 10
 
 ## 🇬🇧 English
 
-Modern and interactive custom card for Home Assistant, designed for **HA-Battery-Notes**. Apple iOS inspired design with Glassmorphism and native fonts.
+Modern and interactive custom card for Home Assistant, designed for **HA-Battery-Notes**. Features a minimalist design with glassmorphism effects and rounded corners.
 
 ### ✨ Features
 * **Auto-discovery**: Automatically finds all devices with the `battery` class.
@@ -70,7 +70,7 @@ drain_count: 10
 
 ## 🇩🇪 Deutsch
 
-Moderne, interaktive benutzerdefinierte Karte für Home Assistant, optimiert für **HA-Battery-Notes**. Design im Apple iOS-Stil mit Glassmorphismus und nativen Schriftarten.
+Moderne, interaktive benutzerdefinierte Karte für Home Assistant, optimiert für **HA-Battery-Notes**. Minimalistisches Design mit Glassmorphismus-Effekten und abgerundeten Ecken.
 
 ### ✨ Funktionen
 * **Auto-Discovery**: Findet automatisch alle Geräte mit der Klasse `battery`.
@@ -102,7 +102,7 @@ drain_count: 10
 
 ## 🇪🇸 Español
 
-Tarjeta interactiva moderna para Home Assistant, diseñada para **HA-Battery-Notes**. Estilo Apple iOS con Glassmorphism y fuentes nativas.
+Tarjeta interactiva moderna para Home Assistant, diseñada para **HA-Battery-Notes**. Diseño minimalista con efectos de glassmorphism y esquinas redondeadas.
 
 ### ✨ Características
 * **Auto-descubrimiento**: Encuentra automáticamente todos los dispositivos con la clase `battery`.
@@ -111,12 +111,12 @@ Tarjeta interactiva moderna para Home Assistant, diseñada para **HA-Battery-Not
 * **Inventario**: Recuento total de baterías por tipo en el hogar.
 
 ### 🛠 Instalación
-**Option 1: HACS (Recomendado)**
+**Opción 1: HACS (Recomendado)**
 1. **HACS** -> **Interfaz** -> Tres puntos -> **Repositorios personalizados**.
 2. URL: `https://github.com/Eugen417/battery-manager-card`, Categoría: **Lovelace**.
 3. Instalar y actualizar la página (Ctrl+F5).
 
-**Option 2: Manual**
+**Opción 2: Manual**
 1. Copie el archivo `battery-manager-card.js` en `/config/www/battery_manager_card/`.
 2. Añada el recurso en la configuración del sistema o en `configuration.yaml` (bajo `lovelace: resources:`): `/local/battery_manager_card/battery-manager-card.js`.
 3. También agregue `battery_manager:` a su `configuration.yaml`.
@@ -134,7 +134,7 @@ drain_count: 10
 
 ## 🇫🇷 Français
 
-Carte interactive moderne pour Home Assistant, conçue pour **HA-Battery-Notes**. Design style Apple iOS avec Glassmorphism et polices natives.
+Carte interactive moderne pour Home Assistant, conçue pour **HA-Battery-Notes**. Design minimaliste avec effets de glassmorphism et coins arrondis.
 
 ### ✨ Fonctionnalités
 * **Détection automatique**: Trouve automatiquement tous les appareils avec la classe `battery`.
@@ -148,7 +148,7 @@ Carte interactive moderne pour Home Assistant, conçue pour **HA-Battery-Notes**
 2. URL: `https://github.com/Eugen417/battery-manager-card`, Catégorie: **Lovelace**.
 3. Installer et rafraîchir la page (Ctrl+F5).
 
-**Option 2: Manuel**
+**Option 2: Manual**
 1. Copiez le fichier `battery-manager-card.js` dans `/config/www/battery_manager_card/`.
 2. Ajoutez la ressource dans les paramètres du système ou dans `configuration.yaml` (sous `lovelace: resources:`): `/local/battery_manager_card/battery-manager-card.js`.
 3. Ajoutez également `battery_manager:` à votre `configuration.yaml`.
