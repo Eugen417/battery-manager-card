@@ -117,15 +117,30 @@ const translations = {
 };
 
 class BatteryManagerCard extends HTMLElement {
+  // Настройки по умолчанию
   setConfig(config) {
     this.config = {
       threshold: config.threshold !== undefined ? config.threshold : 20, 
       charge_threshold: config.charge_threshold !== undefined ? config.charge_threshold : 15, 
       warning_threshold: config.warning_threshold !== undefined ? config.warning_threshold : 40, 
-      drain_count: config.drain_count !== undefined ? config.drain_count : 5, 
+      drain_count: config.drain_count !== undefined ? config.drain_count : 10, 
       ...config
     };
     if (!this.activeTab) this.activeTab = 'all';
+  }
+
+  // МЕТОДЫ ДЛЯ СПИСКА ВЫБОРА КАРТОЧЕК (Card Picker)
+  static getStubConfig() {
+    return {
+      type: "custom:battery-manager-card",
+      charge_threshold: 15,
+      threshold: 20,
+      drain_count: 10
+    };
+  }
+
+  static get cardSize() {
+    return 4;
   }
 
   localize(key, replaceVal = '') {
@@ -287,4 +302,14 @@ class BatteryManagerCard extends HTMLElement {
     this.appendChild(s);
   }
 }
+
+// РЕГИСТРАЦИЯ В СПИСКЕ КАРТОЧЕК
+window.customCards = window.customCards || [];
+window.customCards.push({
+  type: "battery-manager-card",
+  name: "Battery Manager Card",
+  description: "Modern Apple-style battery status card with auto-discovery and drain analytics.",
+  preview: true
+});
+
 customElements.define('battery-manager-card', BatteryManagerCard);
