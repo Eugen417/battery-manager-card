@@ -119,13 +119,12 @@ const translations = {
 class BatteryManagerCard extends HTMLElement {
   setConfig(config) {
     this.config = {
-      threshold: config.threshold || 20, 
-      charge_threshold: config.charge_threshold || 15, 
-      warning_threshold: config.warning_threshold || 40, 
-      drain_count: config.drain_count || 5, // <-- НОВЫЙ ПАРАМЕТР
+      threshold: config.threshold !== undefined ? config.threshold : 20, 
+      charge_threshold: config.charge_threshold !== undefined ? config.charge_threshold : 15, 
+      warning_threshold: config.warning_threshold !== undefined ? config.warning_threshold : 40, 
+      drain_count: config.drain_count !== undefined ? config.drain_count : 5, 
       ...config
     };
-
     if (!this.activeTab) this.activeTab = 'all';
   }
 
@@ -148,360 +147,144 @@ class BatteryManagerCard extends HTMLElement {
 
   set hass(hass) {
     this._hass = hass;
-
     if (!this.content) {
-      this.innerHTML = `
-        <ha-card>
-          <div class="card-header"></div>
-          <div class="card-content" id="content"></div>
-        </ha-card>
-      `;
+      this.innerHTML = `<ha-card><div class="card-header"></div><div class="card-content" id="content"></div></ha-card>`;
       this.content = this.querySelector('#content');
       this.header = this.querySelector('.card-header');
       this.addStyles();
     }
-
     this.header.innerText = this.config.title !== undefined ? this.config.title : this.localize('title_default');
-
-    const threshold = this.config.threshold;
-    const chargeThreshold = this.config.charge_threshold;
     
     let batteries = [];
-    let typesToBuy = {}; 
-    let typesToCharge = {}; 
-    let allTypesInventory = {}; 
-    let lowCount = 0;    
-    let needChargeCount = 0; 
-    let unavailableCount = 0; 
+    let typesToBuy = {}; let typesToCharge = {}; let allTypesInventory = {}; 
+    let lowCount = 0; let needChargeCount = 0; let unavailableCount = 0; 
 
     Object.values(hass.states).forEach(state => {
-      if (state.entity_id.startsWith('sensor.') && 
-          state.attributes.device_class === 'battery' && 
-          state.attributes.battery_type !== undefined) {
-
+      if (state.entity_id.startsWith('sensor.') && state.attributes.device_class === 'battery' && state.attributes.battery_type !== undefined) {
         const isAvailable = state.state !== 'unknown' && state.state !== 'unavailable';
         const level = isAvailable ? parseFloat(state.state) : NaN;
         const batteryType = state.attributes.battery_type;
         const batteryQuantity = state.attributes.battery_quantity || 1;
-        const lastReplacedRaw = state.attributes.battery_last_replaced;
         const isRechargeable = batteryType.toLowerCase().includes('rechargeable');
 
         let typeStr = state.attributes.battery_type_and_quantity || batteryType;
-        if (!typeStr.includes('×') && !typeStr.includes('x')) {
-           typeStr = `${batteryQuantity}× ${batteryType}`;
-        }
+        if (!typeStr.includes('×') && !typeStr.includes('x')) typeStr = `${batteryQuantity}× ${batteryType}`;
 
         let drainRate = 0;
-        if (isAvailable && lastReplacedRaw) {
-          const replacedDate = new Date(lastReplacedRaw);
-          const now = new Date();
-          const daysPassed = (now - replacedDate) / (1000 * 60 * 60 * 24);
-          if (daysPassed > 1) { 
-            const consumed = 100 - level;
-            drainRate = consumed / daysPassed;
-          }
+        if (isAvailable && state.attributes.battery_last_replaced) {
+          const daysPassed = (new Date() - new Date(state.attributes.battery_last_replaced)) / (1000 * 86400);
+          if (daysPassed > 1) drainRate = (100 - level) / daysPassed;
         }
 
         batteries.push({
           entity_id: state.entity_id,
           name: state.attributes.friendly_name.replace(' Батарея+', '').trim(),
-          level: level,
-          isAvailable: isAvailable,
-          type: batteryType,
-          isRechargeable: isRechargeable,
-          type_str: typeStr,
-          quantity: batteryQuantity,
-          last_replaced: isAvailable ? this.formatDate(lastReplacedRaw) : null,
-          drain_rate: drainRate,
-          icon: this.getBatteryIcon(level, isAvailable)
+          level, isAvailable, type: batteryType, isRechargeable, type_str: typeStr,
+          last_replaced: isAvailable ? this.formatDate(state.attributes.battery_last_replaced) : null,
+          drain_rate: drainRate, icon: this.getBatteryIcon(level, isAvailable)
         });
 
         allTypesInventory[batteryType] = (allTypesInventory[batteryType] || 0) + batteryQuantity;
-
-        if (!isAvailable) {
-          unavailableCount++;
-        } else {
-          if (isRechargeable) {
-            if (level < chargeThreshold) {
-               needChargeCount++;
-               typesToCharge[batteryType] = (typesToCharge[batteryType] || 0) + batteryQuantity;
-            }
-          } else {
-            if (level < threshold) {
-               lowCount++;
-               typesToBuy[batteryType] = (typesToBuy[batteryType] || 0) + batteryQuantity;
-            }
-          }
-        }
+        if (!isAvailable) unavailableCount++;
+        else if (isRechargeable && level < this.config.charge_threshold) { needChargeCount++; typesToCharge[batteryType] = (typesToCharge[batteryType] || 0) + batteryQuantity; }
+        else if (!isRechargeable && level < this.config.threshold) { lowCount++; typesToBuy[batteryType] = (typesToBuy[batteryType] || 0) + batteryQuantity; }
       }
     });
 
-    batteries.sort((a, b) => {
-      if (!a.isAvailable && b.isAvailable) return -1;
-      if (a.isAvailable && !b.isAvailable) return 1;
-      return a.level - b.level;
-    });
-
+    batteries.sort((a, b) => (!a.isAvailable && b.isAvailable) ? -1 : (a.isAvailable && !b.isAvailable) ? 1 : a.level - b.level);
     this.render(batteries, typesToBuy, typesToCharge, allTypesInventory, lowCount, needChargeCount, unavailableCount);
   }
 
   formatDate(rawDate) {
     if (!rawDate) return null;
-    try {
-      const lang = (this._hass && this._hass.language) ? this._hass.language : 'en';
-      const date = new Date(rawDate);
-      return date.toLocaleDateString(lang, { month: 'short', day: 'numeric', year: 'numeric' });
-    } catch (e) {
-      return null;
-    }
+    const lang = (this._hass && this._hass.language) ? this._hass.language : 'en';
+    return new Date(rawDate).toLocaleDateString(lang, { month: 'short', day: 'numeric', year: 'numeric' });
   }
 
   render(batteries, typesToBuy, typesToCharge, allTypesInventory, lowCount, needChargeCount, unavailableCount) {
-    let html = ``;
-
-    html += `
-      <div class="tabs-wrapper">
-        <div class="tabs">
-          <div class="tab ${this.activeTab === 'all' ? 'active' : ''}" data-tab="all">${this.localize('tab_all')}</div>
-          <div class="tab ${this.activeTab === 'attention' ? 'active' : ''}" data-tab="attention">${this.localize('tab_attention')}</div>
-          <div class="tab ${this.activeTab === 'type' ? 'active' : ''}" data-tab="type">${this.localize('tab_type')}</div>
-          <div class="tab ${this.activeTab === 'drain' ? 'active' : ''}" data-tab="drain">${this.localize('tab_drain')}</div>
-        </div>
-      </div>
-    `;
+    let html = `<div class="tabs-wrapper"><div class="tabs">`;
+    ['all', 'attention', 'type', 'drain'].forEach(t => {
+      html += `<div class="tab ${this.activeTab === t ? 'active' : ''}" data-tab="${t}">${this.localize('tab_'+t)}${t==='all'?' ('+batteries.length+')':''}</div>`;
+    });
+    html += `</div></div><div class="tab-content">`;
 
     const renderRow = (bat, showDrain = false) => {
-      let levelClass = '';
-      if (!bat.isAvailable) levelClass = 'problem';
-      else if (bat.level < (bat.isRechargeable ? this.config.charge_threshold : this.config.threshold)) levelClass = 'critical';
-      else if (bat.level < this.config.warning_threshold) levelClass = 'warning';
-      else levelClass = 'good';
-
-      let metaText = bat.type_str;
-      if (!bat.isAvailable) metaText += ` • ${this.localize('no_connection')}`;
-      else if (showDrain && bat.drain_rate > 0) metaText += ` • ${this.localize('drain_rate', bat.drain_rate.toFixed(1))}`;
-      else if (bat.last_replaced) metaText += ` • ${bat.last_replaced}`;
-
-      const displayLevel = bat.isAvailable ? `${bat.level}%` : '—';
-
-      return `
-        <div class="battery-row ${levelClass}" data-entity="${bat.entity_id}">
-          <div class="icon-wrapper ${levelClass}">
-            <ha-icon icon="${bat.icon}"></ha-icon>
-          </div>
-          <div class="name-col">
-            <div class="name">${bat.name}</div>
-            <div class="meta">${metaText}</div>
-          </div>
-          <div class="level-col">
-            <span class="level ${levelClass}">${displayLevel}</span>
-          </div>
-        </div>
-      `;
+      let lClass = !bat.isAvailable ? 'problem' : bat.level < (bat.isRechargeable ? this.config.charge_threshold : this.config.threshold) ? 'critical' : bat.level < this.config.warning_threshold ? 'warning' : 'good';
+      let meta = bat.type_str + (!bat.isAvailable ? ` • ${this.localize('no_connection')}` : showDrain && bat.drain_rate > 0 ? ` • ${this.localize('drain_rate', bat.drain_rate.toFixed(1))}` : bat.last_replaced ? ` • ${bat.last_replaced}` : '');
+      return `<div class="battery-row ${lClass}" data-entity="${bat.entity_id}"><div class="icon-wrapper ${lClass}"><ha-icon icon="${bat.icon}"></ha-icon></div><div class="name-col"><div class="name">${bat.name}</div><div class="meta">${meta}</div></div><div class="level-col"><span class="level ${lClass}">${bat.isAvailable ? bat.level+'%' : '—'}</span></div></div>`;
     };
 
-    html += `<div class="tab-content">`;
-
     if (this.activeTab === 'all') {
-      html += `<div class="list-title">${this.localize('total_devices', batteries.length)}</div>`;
-      html += `<div class="battery-list">`;
-      batteries.forEach(bat => { html += renderRow(bat); });
+      html += `<div class="list-title">${this.localize('total_devices', batteries.length)}</div><div class="battery-list">`;
+      batteries.forEach(b => html += renderRow(b));
       html += `</div>`;
-    }
-
-    else if (this.activeTab === 'attention') {
-      html += `<div class="rec-box ${lowCount > 0 || needChargeCount > 0 || unavailableCount > 0 ? 'warning' : 'ok'}">`;
-      if (lowCount > 0 || needChargeCount > 0 || unavailableCount > 0) {
-        html += `<div class="rec-title" style="color:var(--apple-orange)">${this.localize('attention_req')}</div>`;
-        html += `<div class="rec-status-list">`;
-        if (unavailableCount > 0) html += `<div class="rec-stat-item">${this.localize('offline_count', unavailableCount)}</div>`;
-        if (needChargeCount > 0) html += `<div class="rec-stat-item">${this.localize('charge_count', needChargeCount)}</div>`;
-        if (lowCount > 0) html += `<div class="rec-stat-item">${this.localize('replace_note')}</div>`;
-        html += `</div>`;
-      } else {
-        html += `<div class="rec-title ok">${this.localize('all_good')}</div>`;
-      }
+    } else if (this.activeTab === 'attention') {
+      html += `<div class="rec-box ${lowCount+needChargeCount+unavailableCount>0?'warning':'ok'}"><div class="rec-title">${lowCount+needChargeCount+unavailableCount>0?this.localize('attention_req'):this.localize('all_good')}</div><div class="rec-status-list">`;
+      if (unavailableCount>0) html += `<div class="rec-stat-item">${this.localize('offline_count', unavailableCount)}</div>`;
+      if (needChargeCount>0) html += `<div class="rec-stat-item">${this.localize('charge_count', needChargeCount)}</div>`;
+      if (lowCount>0) html += `<div class="rec-stat-item">${this.localize('replace_note')}</div>`;
+      html += `</div></div><div class="battery-list">`;
+      const att = batteries.filter(b => !b.isAvailable || b.level < (b.isRechargeable ? this.config.charge_threshold : this.config.threshold));
+      att.length ? att.forEach(b => html += renderRow(b)) : html += `<div class="meta" style="text-align:center">${this.localize('no_problems')}</div>`;
       html += `</div>`;
-
-      const attentionBatteries = batteries.filter(b => !b.isAvailable || b.level < (b.isRechargeable ? this.config.charge_threshold : this.config.threshold));
-      html += `<div class="battery-list">`;
-      if (attentionBatteries.length > 0) {
-         attentionBatteries.forEach(bat => { html += renderRow(bat); });
-      } else {
-         html += `<div class="meta" style="padding: 16px; text-align: center;">${this.localize('no_problems')}</div>`;
-      }
-      html += `</div>`;
-    }
-
-    else if (this.activeTab === 'type') {
+    } else if (this.activeTab === 'type') {
       html += `<div class="inventory-section">`;
-      
-      const hasToCharge = Object.keys(typesToCharge).length > 0;
-      const hasToBuy = Object.keys(typesToBuy).length > 0;
-
-      if (!hasToCharge && !hasToBuy) {
-        html += `<div class="buy-box ok"><div class="box-title" style="margin-bottom:0;">${this.localize('no_buys')}</div></div>`;
-      } else {
-        if (hasToCharge) {
-          html += `<div class="buy-box charge-box">`;
-          html += `<div class="box-title" style="color: var(--apple-red);">${this.localize('need_charge', this.config.charge_threshold)}</div>`;
-          html += `<ul class="type-list">`;
-          for (const [type, qty] of Object.entries(typesToCharge)) {
-            html += `<li><span class="type-badge charge-badge">${type}</span> <span class="qty">${qty} ${this.localize('pcs')}</span></li>`;
-          }
-          html += `</ul></div>`;
-        }
-
-        if (hasToBuy) {
-          html += `<div class="buy-box active-buy">`;
-          html += `<div class="box-title">${this.localize('need_buy', this.config.threshold)}</div>`;
-          html += `<ul class="type-list">`;
-          for (const [type, qty] of Object.entries(typesToBuy)) {
-            html += `<li><span class="type-badge">${type}</span> <span class="qty">${qty} ${this.localize('pcs')}</span></li>`;
-          }
-          html += `</ul></div>`;
-        }
-      }
-
-      html += `<div class="list-title" style="margin-top: 20px;">${this.localize('in_use')}</div>`;
-      html += `<ul class="type-list minimal">`;
-      for (const [type, qty] of Object.entries(allTypesInventory)) {
-        html += `<li><span class="type-name">${type}</span> <span class="type-total">${qty} ${this.localize('pcs')}</span></li>`;
-      }
-      html += `</ul>`;
+      if (Object.keys(typesToCharge).length || Object.keys(typesToBuy).length) {
+        if (Object.keys(typesToCharge).length) html += `<div class="buy-box charge-box"><div class="box-title" style="color:var(--apple-red)">${this.localize('need_charge', this.config.charge_threshold)}</div><ul class="type-list">${Object.entries(typesToCharge).map(([t,q])=>`<li><span class="type-badge charge-badge">${t}</span> <b>${q} ${this.localize('pcs')}</b></li>`).join('')}</ul></div>`;
+        if (Object.keys(typesToBuy).length) html += `<div class="buy-box active-buy"><div class="box-title">${this.localize('need_buy', this.config.threshold)}</div><ul class="type-list">${Object.entries(typesToBuy).map(([t,q])=>`<li><span class="type-badge">${t}</span> <b>${q} ${this.localize('pcs')}</b></li>`).join('')}</ul></div>`;
+      } else html += `<div class="buy-box ok">${this.localize('no_buys')}</div>`;
+      html += `<div class="list-title" style="margin-top:20px">${this.localize('in_use')}</div><ul class="type-list minimal">${Object.entries(allTypesInventory).map(([t,q])=>`<li><span class="type-name">${t}</span> <span class="type-total">${q} ${this.localize('pcs')}</span></li>`).join('')}</ul></div>`;
+    } else if (this.activeTab === 'drain') {
+      html += `<div class="list-title">${this.localize('drain_speed')}</div><div class="battery-list">`;
+      const dr = batteries.filter(b => b.drain_rate > 0 && b.isAvailable).sort((a,b)=>b.drain_rate-a.drain_rate).slice(0, this.config.drain_count);
+      dr.length ? dr.forEach(b => html += renderRow(b, true)) : html += `<div class="meta" style="text-align:center">${this.localize('no_drain_data')}</div>`;
       html += `</div>`;
     }
 
-    else if (this.activeTab === 'drain') {
-      html += `<div class="list-title">${this.localize('drain_speed')}</div>`;
-      
-      // ИСПОЛЬЗУЕМ НОВУЮ НАСТРОЙКУ drain_count ЗДЕСЬ
-      const drainBatteries = [...batteries]
-        .filter(b => b.drain_rate > 0 && b.isAvailable)
-        .sort((a, b) => b.drain_rate - a.drain_rate)
-        .slice(0, this.config.drain_count);
-
-      html += `<div class="battery-list" style="margin-top: 10px;">`;
-      if (drainBatteries.length > 0) {
-        drainBatteries.forEach(bat => { html += renderRow(bat, true); });
-      } else {
-        html += `<div class="meta" style="padding: 16px; text-align: center;">${this.localize('no_drain_data')}</div>`;
-      }
-      html += `</div>`;
-    }
-
-    html += `</div>`; 
-    this.content.innerHTML = html;
-
-    this.querySelectorAll('.tab').forEach(tabEl => {
-      tabEl.addEventListener('click', (e) => {
-        this.activeTab = e.target.dataset.tab;
-        this.render(batteries, typesToBuy, typesToCharge, allTypesInventory, lowCount, needChargeCount, unavailableCount);
-      });
-    });
-
-    this.querySelectorAll('.battery-row').forEach(row => {
-      row.addEventListener('click', () => {
-        if (!row.classList.contains('problem')) {
-          const event = new Event('hass-more-info', { bubbles: true, cancelable: false, composed: true });
-          event.detail = { entityId: row.dataset.entity };
-          this.dispatchEvent(event);
-        }
-      });
-    });
+    this.content.innerHTML = html + `</div>`;
+    this.querySelectorAll('.tab').forEach(t => t.addEventListener('click', e => { this.activeTab = e.target.dataset.tab; this.hass = this._hass; }));
+    this.querySelectorAll('.battery-row').forEach(r => r.addEventListener('click', () => { if (!r.classList.contains('problem')) { const ev = new Event('hass-more-info', { bubbles: true, composed: true }); ev.detail = { entityId: r.dataset.entity }; this.dispatchEvent(ev); } }));
   }
 
   addStyles() {
-    const style = document.createElement('style');
-    style.textContent = `
-      :host {
-        --apple-bg: var(--card-background-color);
-        --apple-secondary-bg: var(--secondary-background-color);
-        --apple-red: #ff3b30;
-        --apple-orange: #ff9500;
-        --apple-green: #34c759;
-        --apple-grey: #8e8e93;
-        --apple-radius: 16px;
-        --apple-row-padding: 12px 16px;
-      }
-
-      ha-card {
-        border-radius: var(--apple-radius); box-shadow: 0 10px 20px rgba(0,0,0,0.05);
-        border: none; overflow: hidden; padding-bottom: 12px;
-        font-family: -apple-system, BlinkMacSystemFont, "SF Pro Display", "Helvetica Neue", sans-serif;
-      }
-
-      .card-header {
-        font-size: 26px; font-weight: 700; letter-spacing: -0.5px;
-        color: var(--primary-text-color); padding: 24px 20px 16px 20px;
-      }
-      .card-content { padding: 0 16px; }
-
-      .tabs-wrapper { display: flex; justify-content: center; margin-bottom: 16px; }
-      .tabs { display: flex; background-color: rgba(120, 120, 128, 0.1); border-radius: 9px; padding: 2px; width: 100%;}
-      .tab {
-        flex: 1; text-align: center; padding: 6px 2px; font-size: 11px; font-weight: 500;
-        color: var(--primary-text-color); cursor: pointer; border-radius: 7px; transition: all 0.2s;
-        text-transform: uppercase; letter-spacing: 0.5px;
-      }
-      .tab.active { background-color: var(--card-background-color); box-shadow: 0 3px 8px rgba(0,0,0,0.1); font-weight: 600; }
-
-      .rec-box { border-radius: 12px; padding: 16px; margin-bottom: 20px; }
-      .rec-box.warning { background-color: rgba(255, 149, 0, 0.08); }
-      .rec-box.ok { background-color: rgba(52, 199, 89, 0.08); }
-      .rec-title { font-weight: 600; font-size: 17px; margin-bottom: 8px; }
-      .rec-title.ok { color: var(--apple-green); text-align: center; margin-bottom: 0; }
-      .rec-status-list { display: flex; flex-direction: column; gap: 6px; font-size: 14px; }
-      
-      .buy-box { border-radius: 12px; padding: 16px; margin-bottom: 16px; }
-      .buy-box.active-buy { background-color: rgba(255, 149, 0, 0.1); border: 1px solid rgba(255, 149, 0, 0.2); }
-      .buy-box.charge-box { background-color: rgba(255, 59, 48, 0.1); border: 1px solid rgba(255, 59, 48, 0.2); }
-      .buy-box.ok { background-color: rgba(52, 199, 89, 0.08); text-align: center; }
-      .box-title { font-weight: 600; font-size: 15px; margin-bottom: 12px; }
-      
-      .type-list { list-style: none; padding: 0; margin: 0; display: flex; flex-direction: column; gap: 10px; }
-      .type-list li { display: flex; justify-content: space-between; align-items: center; }
-      .type-badge { background: var(--apple-orange); color: #fff; padding: 4px 10px; border-radius: 8px; font-weight: 600; font-size: 14px; }
-      .charge-badge { background: var(--apple-red); }
-      .type-list .qty { font-weight: bold; font-size: 16px; }
-      .type-list.minimal li { padding: 8px 0; border-bottom: 1px solid var(--divider-color); }
-      .type-name { font-weight: 500; font-size: 15px; }
-      .type-total { color: var(--secondary-text-color); font-weight: 600; }
-
-      .list-title { font-weight: 600; font-size: 18px; margin-bottom: 8px; }
+    const s = document.createElement('style');
+    s.textContent = `
+      :host { --apple-red: #ff3b30; --apple-orange: #ff9500; --apple-green: #34c759; --apple-grey: #8e8e93; }
+      ha-card { border-radius: 16px; box-shadow: 0 10px 20px rgba(0,0,0,0.05); overflow: hidden; padding-bottom: 12px; font-family: -apple-system, BlinkMacSystemFont, "SF Pro Display", sans-serif; }
+      .card-header { font-size: 26px; font-weight: 700; padding: 24px 20px 16px; }
+      .tabs-wrapper { display: flex; padding: 0 16px 16px; }
+      .tabs { display: flex; background: rgba(120, 120, 128, 0.1); border-radius: 9px; padding: 2px; width: 100%; }
+      .tab { flex: 1; text-align: center; padding: 6px 2px; font-size: 11px; font-weight: 600; cursor: pointer; border-radius: 7px; transition: 0.2s; text-transform: uppercase; }
+      .tab.active { background: var(--card-background-color); box-shadow: 0 3px 8px rgba(0,0,0,0.1); }
+      .tab-content { padding: 0 16px; }
       .battery-list { display: flex; flex-direction: column; gap: 2px; }
-      .battery-row {
-        display: flex; align-items: center; padding: var(--apple-row-padding);
-        border-radius: 12px; transition: background 0.1s; margin: 0 -8px;
-      }
-      .battery-row:not(.problem) { cursor: pointer; }
-      .battery-row:not(.problem):hover { background-color: var(--apple-secondary-bg); }
-      
-      .icon-wrapper {
-        width: 40px; height: 40px; border-radius: 10px; 
-        display: flex; align-items: center; justify-content: center; margin-right: 16px;
-        transition: background-color 0.2s;
-      }
-      .icon-wrapper.good { background-color: rgba(52, 199, 89, 0.12); color: var(--apple-green); }
-      .icon-wrapper.critical { background-color: rgba(255, 59, 48, 0.12); color: var(--apple-red); }
-      .icon-wrapper.warning { background-color: rgba(255, 149, 0, 0.12); color: var(--apple-orange); }
-      .icon-wrapper.problem { background-color: rgba(142, 142, 147, 0.12); color: var(--apple-grey); }
-
-      .name-col { flex-grow: 1; display: flex; flex-direction: column; gap: 2px; }
-      .name { font-weight: 600; font-size: 17px; color: var(--primary-text-color); }
-      .meta { font-size: 13px; color: var(--secondary-text-color); font-weight: 400; }
-
-      .level-col { text-align: right; margin-left: 10px; }
+      .battery-row { display: flex; align-items: center; padding: 12px 16px; border-radius: 12px; margin: 0 -8px; cursor: pointer; }
+      .battery-row:hover { background: var(--secondary-background-color); }
+      .icon-wrapper { width: 40px; height: 40px; border-radius: 10px; display: flex; align-items: center; justify-content: center; margin-right: 16px; }
+      .icon-wrapper.good { background: rgba(52, 199, 89, 0.12); color: var(--apple-green); }
+      .icon-wrapper.warning { background: rgba(255, 149, 0, 0.12); color: var(--apple-orange); }
+      .icon-wrapper.critical { background: rgba(255, 59, 48, 0.12); color: var(--apple-red); }
+      .icon-wrapper.problem { background: rgba(142, 142, 147, 0.12); color: var(--apple-grey); }
+      .name { font-weight: 600; font-size: 17px; }
+      .meta { font-size: 13px; color: var(--secondary-text-color); }
       .level { font-weight: 700; font-size: 20px; }
       .level.good { color: var(--apple-green); }
-      .level.critical { color: var(--apple-red); }
       .level.warning { color: var(--apple-orange); }
-      .level.problem { color: var(--apple-grey); }
+      .level.critical { color: var(--apple-red); }
+      .rec-box { border-radius: 12px; padding: 16px; margin-bottom: 20px; }
+      .rec-box.warning { background: rgba(255, 149, 0, 0.08); }
+      .rec-box.ok { background: rgba(52, 199, 89, 0.08); color: var(--apple-green); text-align: center; }
+      .rec-title { font-weight: 700; font-size: 17px; margin-bottom: 8px; }
+      .buy-box { border-radius: 12px; padding: 16px; margin-bottom: 12px; }
+      .active-buy { background: rgba(255, 149, 0, 0.1); border: 1px solid rgba(255, 149, 0, 0.2); }
+      .charge-box { background: rgba(255, 59, 48, 0.1); border: 1px solid rgba(255, 59, 48, 0.2); }
+      .type-list { list-style: none; padding: 0; margin: 0; display: flex; flex-direction: column; gap: 8px; }
+      .type-list li { display: flex; justify-content: space-between; }
+      .type-badge { background: var(--apple-orange); color: #fff; padding: 2px 8px; border-radius: 6px; font-size: 12px; font-weight: 700; }
+      .charge-badge { background: var(--apple-red); }
+      .list-title { font-weight: 700; font-size: 18px; margin-bottom: 12px; }
     `;
-    this.appendChild(style);
+    this.appendChild(s);
   }
-
-  getCardSize() { return 6; }
 }
-
 customElements.define('battery-manager-card', BatteryManagerCard);
