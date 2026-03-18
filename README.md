@@ -1,4 +1,4 @@
-# 🔋 Battery Manager Card (Apple Design Edition)
+# 🔋 Battery Manager Card
 
 Современная, компактная и интерактивная пользовательская карточка (Custom Lovelace Card) для Home Assistant. Создана специально для работы в связке с интеграцией [HA-Battery-Notes](https://github.com/andrew-codechimp/HA-Battery-Notes).
 
