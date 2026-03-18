@@ -23,7 +23,8 @@
 **Вариант 2: Вручную**
 1. Скопируйте файл `battery-manager-card.js` в `/config/www/battery_manager_card/`.
 2. Добавьте ресурс в настройках системы или в `configuration.yaml` (секция `lovelace: resources:`): `/local/battery_manager_card/battery-manager-card.js`.
-3. Также добавьте `battery_manager:` в ваш `configuration.yaml`.
+
+**Важно:** Для любого способа установки добавьте `battery_manager:` в ваш `configuration.yaml`.
 
 ### ⚙️ Добавление на дашборд
 Нажмите "Добавить карточку" -> "Вручную" (Manual Card) и вставьте:
@@ -55,7 +56,8 @@ Modern and interactive custom card for Home Assistant, designed for **HA-Battery
 **Option 2: Manual**
 1. Copy the `battery-manager-card.js` file to `/config/www/battery_manager_card/`.
 2. Add the resource in system settings or in `configuration.yaml` (under `lovelace: resources:`): `/local/battery_manager_card/battery-manager-card.js`.
-3. Also add `battery_manager:` to your `configuration.yaml`.
+
+**Important:** For either installation method, add `battery_manager:` to your `configuration.yaml`.
 
 ### ⚙️ Dashboard Configuration
 Add a "Manual" card on your dashboard and paste:
@@ -87,7 +89,8 @@ Moderne, interaktive benutzerdefinierte Karte für Home Assistant, optimiert fü
 **Option 2: Manuell**
 1. Kopieren Sie die Datei `battery-manager-card.js` nach `/config/www/battery_manager_card/`.
 2. Fügen Sie die Ressource in den Systemeinstellungen oder in `configuration.yaml` (unter `lovelace: resources:`) hinzu: `/local/battery_manager_card/battery-manager-card.js`.
-3. Fügen Sie außerdem `battery_manager:` zu Ihrer `configuration.yaml` hinzu.
+
+**Wichtig:** Fügen Sie bei beiden Installationsmethoden `battery_manager:` zu Ihrer `configuration.yaml` hinzu.
 
 ### ⚙️ Dashboard-Konfiguration
 Fügen Sie eine "Manuelle Karte" auf Ihrem Dashboard hinzu und fügen Sie ein:
@@ -119,7 +122,8 @@ Tarjeta interactiva moderna para Home Assistant, diseñada para **HA-Battery-Not
 **Opción 2: Manual**
 1. Copie el archivo `battery-manager-card.js` en `/config/www/battery_manager_card/`.
 2. Añada el recurso en la configuración del sistema o en `configuration.yaml` (bajo `lovelace: resources:`): `/local/battery_manager_card/battery-manager-card.js`.
-3. También agregue `battery_manager:` a su `configuration.yaml`.
+
+**Importante:** Para cualquier método de instalación, añada `battery_manager:` a su `configuration.yaml`.
 
 ### ⚙️ Configuración del Panel
 Añada una tarjeta "Manual" en su panel y pegue:
@@ -148,10 +152,11 @@ Carte interactive moderne pour Home Assistant, conçue pour **HA-Battery-Notes**
 2. URL: `https://github.com/Eugen417/battery-manager-card`, Catégorie: **Lovelace**.
 3. Installer et rafraîchir la page (Ctrl+F5).
 
-**Option 2: Manual**
+**Option 2: Manuel**
 1. Copiez le fichier `battery-manager-card.js` dans `/config/www/battery_manager_card/`.
 2. Ajoutez la ressource dans les paramètres du système ou dans `configuration.yaml` (sous `lovelace: resources:`): `/local/battery_manager_card/battery-manager-card.js`.
-3. Ajoutez également `battery_manager:` à votre `configuration.yaml`.
+
+**Important:** Pour toute méthode d'installation, ajoutez `battery_manager:` à votre `configuration.yaml`.
 
 ### ⚙️ Configuration du Tableau de Bord
 Ajoutez une carte "Manuel" sur votre tableau de bord et collez:
