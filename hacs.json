@@ -1,4 +1,6 @@
 {
   "name": "Battery Manager Card",
+  "content_type": "plugin",
+  "filename": "battery-manager-card.js",
   "render_readme": true
 }
