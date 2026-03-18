@@ -1,4 +1,4 @@
-# 🔋 Battery Manager Card (Apple Design Edition)
+# 🔋 Battery Manager Card
 
 [🇷🇺 Русский](#-русский) | [🇬🇧 English](#-english) | [🇩🇪 Deutsch](#-deutsch) | [🇪🇸 Español](#-español) | [🇫🇷 Français](#-français)
 
