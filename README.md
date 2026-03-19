@@ -28,9 +28,9 @@
 Нажмите "Добавить карточку" -> "Вручную" (Manual Card) и вставьте:
 ```yaml
 type: custom:battery-manager-card
-charge_threshold: 15
-threshold: 20
-drain_count: 10
+charge_threshold: 15 # Порог заряда для аккумуляторов (%)
+threshold: 20        # Порог критического заряда для обычных батареек (%)
+drain_count: 10      # Количество устройств на вкладке "РАСХОД"
 ```
 
 ---
@@ -59,9 +59,9 @@ Modern and interactive custom card for Home Assistant, designed for **HA-Battery
 Add a "Manual" card on your dashboard and paste:
 ```yaml
 type: custom:battery-manager-card
-charge_threshold: 15
-threshold: 20
-drain_count: 10
+charge_threshold: 15 # Critical charge level for rechargeable batteries (%)
+threshold: 20        # Critical charge level for standard batteries (%)
+drain_count: 10      # Number of devices in the "DRAIN" tab
 ```
 
 ---
@@ -90,9 +90,9 @@ Moderne, interaktive benutzerdefinierte Karte für Home Assistant, optimiert fü
 Fügen Sie eine "Manuelle Karte" auf Ihrem Dashboard hinzu und fügen Sie ein:
 ```yaml
 type: custom:battery-manager-card
-charge_threshold: 15
-threshold: 20
-drain_count: 10
+charge_threshold: 15 # Kritischer Stand für Akkus (%)
+threshold: 20        # Kritischer Stand für Standardbatterien (%)
+drain_count: 10      # Anzahl der Geräte im Tab "VERBRAUCH"
 ```
 
 ---
@@ -121,9 +121,9 @@ Tarjeta interactiva moderna para Home Assistant, diseñada para **HA-Battery-Not
 Añada una tarjeta "Manual" en su panel y pegue:
 ```yaml
 type: custom:battery-manager-card
-charge_threshold: 15
-threshold: 20
-drain_count: 10
+charge_threshold: 15 # Nivel crítico para baterías recargables (%)
+threshold: 20        # Nivel crítico para pilas estándar (%)
+drain_count: 10      # Dispositivos en la pestaña "DESCARGA"
 ```
 
 ---
@@ -152,7 +152,7 @@ Carte interactive moderne pour Home Assistant, conçue pour **HA-Battery-Notes**
 Ajoutez une carte "Manuel" sur votre tableau de bord et collez:
 ```yaml
 type: custom:battery-manager-card
-charge_threshold: 15
-threshold: 20
-drain_count: 10
+charge_threshold: 15 # Niveau critique pour les batteries rechargeables (%)
+threshold: 20        # Niveau critique pour les piles standard (%)
+drain_count: 10      # Nombre d'appareils dans l'onglet "DÉCHARGE"
 ```
