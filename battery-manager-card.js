@@ -204,7 +204,7 @@ class BatteryManagerCard extends HTMLElement {
       }
     });
 
-    batteries.sort((a, b) => (!a.isAvailable && b.isAvailable) ? -1 : (a.isAvailable && !b.isAvailable) ? 1 : a.level - b.level);
+    batteries.sort((a, b) => (!a.isAvailable && b.isAvailable) ? 1 : (a.isAvailable && !b.isAvailable) ? -1 : a.level - b.level);
     this.render(batteries, typesToBuy, typesToCharge, allTypesInventory, lowCount, needChargeCount, unavailableCount);
   }
 
