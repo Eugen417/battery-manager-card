@@ -117,7 +117,6 @@ const translations = {
 };
 
 class BatteryManagerCard extends HTMLElement {
-  // Настройки по умолчанию
   setConfig(config) {
     this.config = {
       threshold: config.threshold !== undefined ? config.threshold : 20, 
@@ -129,7 +128,6 @@ class BatteryManagerCard extends HTMLElement {
     if (!this.activeTab) this.activeTab = 'all';
   }
 
-  // МЕТОДЫ ДЛЯ СПИСКА ВЫБОРА КАРТОЧЕК (Card Picker)
   static getStubConfig() {
     return {
       type: "custom:battery-manager-card",
@@ -226,7 +224,13 @@ class BatteryManagerCard extends HTMLElement {
     const renderRow = (bat, showDrain = false) => {
       let lClass = !bat.isAvailable ? 'problem' : bat.level < (bat.isRechargeable ? this.config.charge_threshold : this.config.threshold) ? 'critical' : bat.level < this.config.warning_threshold ? 'warning' : 'good';
       let meta = bat.type_str + (!bat.isAvailable ? ` • ${this.localize('no_connection')}` : showDrain && bat.drain_rate > 0 ? ` • ${this.localize('drain_rate', bat.drain_rate.toFixed(1))}` : bat.last_replaced ? ` • ${bat.last_replaced}` : '');
-      return `<div class="battery-row ${lClass}" data-entity="${bat.entity_id}"><div class="icon-wrapper ${lClass}"><ha-icon icon="${bat.icon}"></ha-icon></div><div class="name-col"><div class="name">${bat.name}</div><div class="meta">${meta}</div></div><div class="level-col"><span class="level ${lClass}">${bat.isAvailable ? bat.level+'%' : '—'}</span></div></div>`;
+      
+      // Обновленная HTML-структура с классами для Grid
+      return `<div class="battery-row ${lClass}" data-entity="${bat.entity_id}">
+                <div class="icon-wrapper ${lClass}"><ha-icon icon="${bat.icon}"></ha-icon></div>
+                <div class="name-col"><div class="name">${bat.name}</div><div class="meta">${meta}</div></div>
+                <div class="level-col"><span class="level ${lClass}">${bat.isAvailable ? bat.level+'%' : '—'}</span></div>
+              </div>`;
     };
 
     if (this.activeTab === 'all') {
@@ -243,12 +247,12 @@ class BatteryManagerCard extends HTMLElement {
       att.length ? att.forEach(b => html += renderRow(b)) : html += `<div class="meta" style="text-align:center">${this.localize('no_problems')}</div>`;
       html += `</div>`;
     } else if (this.activeTab === 'type') {
-      html += `<div class="inventory-section">`;
+      let typeHtml = '';
       if (Object.keys(typesToCharge).length || Object.keys(typesToBuy).length) {
-        if (Object.keys(typesToCharge).length) html += `<div class="buy-box charge-box"><div class="box-title" style="color:var(--apple-red)">${this.localize('need_charge', this.config.charge_threshold)}</div><ul class="type-list">${Object.entries(typesToCharge).map(([t,q])=>`<li><span class="type-badge charge-badge">${t}</span> <b>${q} ${this.localize('pcs')}</b></li>`).join('')}</ul></div>`;
-        if (Object.keys(typesToBuy).length) html += `<div class="buy-box active-buy"><div class="box-title">${this.localize('need_buy', this.config.threshold)}</div><ul class="type-list">${Object.entries(typesToBuy).map(([t,q])=>`<li><span class="type-badge">${t}</span> <b>${q} ${this.localize('pcs')}</b></li>`).join('')}</ul></div>`;
-      } else html += `<div class="buy-box ok">${this.localize('no_buys')}</div>`;
-      html += `<div class="list-title" style="margin-top:20px">${this.localize('in_use')}</div><ul class="type-list minimal">${Object.entries(allTypesInventory).map(([t,q])=>`<li><span class="type-name">${t}</span> <span class="type-total">${q} ${this.localize('pcs')}</span></li>`).join('')}</ul></div>`;
+        if (Object.keys(typesToCharge).length) typeHtml += `<div class="buy-box charge-box"><div class="box-title" style="color:var(--apple-red)">${this.localize('need_charge', this.config.charge_threshold)}</div><ul class="type-list">${Object.entries(typesToCharge).map(([t,q])=>`<li><span class="type-badge charge-badge">${t}</span> <b>${q} ${this.localize('pcs')}</b></li>`).join('')}</ul></div>`;
+        if (Object.keys(typesToBuy).length) typeHtml += `<div class="buy-box active-buy"><div class="box-title">${this.localize('need_buy', this.config.threshold)}</div><ul class="type-list">${Object.entries(typesToBuy).map(([t,q])=>`<li><span class="type-badge">${t}</span> <b>${q} ${this.localize('pcs')}</b></li>`).join('')}</ul></div>`;
+      } else typeHtml += `<div class="buy-box ok">${this.localize('no_buys')}</div>`;
+      html += `<div class="inventory-section">${typeHtml}<div class="list-title" style="margin-top:20px">${this.localize('in_use')}</div><ul class="type-list minimal">${Object.entries(allTypesInventory).map(([t,q])=>`<li><span class="type-name">${t}</span> <span class="type-total">${q} ${this.localize('pcs')}</span></li>`).join('')}</ul></div>`;
     } else if (this.activeTab === 'drain') {
       html += `<div class="list-title">${this.localize('drain_speed')}</div><div class="battery-list">`;
       const dr = batteries.filter(b => b.drain_rate > 0 && b.isAvailable).sort((a,b)=>b.drain_rate-a.drain_rate).slice(0, this.config.drain_count);
@@ -273,19 +277,45 @@ class BatteryManagerCard extends HTMLElement {
       .tab.active { background: var(--card-background-color); box-shadow: 0 3px 8px rgba(0,0,0,0.1); }
       .tab-content { padding: 0 16px; }
       .battery-list { display: flex; flex-direction: column; gap: 2px; }
-      .battery-row { display: flex; align-items: center; padding: 12px 16px; border-radius: 12px; margin: 0 -8px; cursor: pointer; }
+
+      /* --- ИСПОЛЬЗУЕМ CSS GRID ДЛЯ РОВНЫХ СТРОК --- */
+      .battery-row { 
+        display: grid; 
+        grid-template-columns: 40px 1fr auto; /* 40px иконка | всё свободное место | авто-ширина под проценты */
+        align-items: center; 
+        gap: 16px; 
+        padding: 12px 16px; 
+        border-radius: 12px; 
+        margin: 0 -8px; 
+        cursor: pointer; 
+      }
       .battery-row:hover { background: var(--secondary-background-color); }
-      .icon-wrapper { width: 40px; height: 40px; border-radius: 10px; display: flex; align-items: center; justify-content: center; margin-right: 16px; }
+
+      .icon-wrapper { 
+        width: 40px; height: 40px; border-radius: 10px; 
+        display: flex; align-items: center; justify-content: center; 
+      }
       .icon-wrapper.good { background: rgba(52, 199, 89, 0.12); color: var(--apple-green); }
       .icon-wrapper.warning { background: rgba(255, 149, 0, 0.12); color: var(--apple-orange); }
       .icon-wrapper.critical { background: rgba(255, 59, 48, 0.12); color: var(--apple-red); }
       .icon-wrapper.problem { background: rgba(142, 142, 147, 0.12); color: var(--apple-grey); }
-      .name { font-weight: 600; font-size: 17px; }
-      .meta { font-size: 13px; color: var(--secondary-text-color); }
+
+      .name-col { 
+        min-width: 0; /* Критически важно для обрезки текста в Grid */
+        display: flex; flex-direction: column; justify-content: center; 
+      }
+      .name { font-weight: 600; font-size: 17px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+      .meta { font-size: 13px; color: var(--secondary-text-color); white-space: nowrap; overflow: hidden; text-overflow: ellipsis; margin-top: 2px; }
+
+      .level-col { 
+        text-align: right; 
+        white-space: nowrap; 
+      }
       .level { font-weight: 700; font-size: 20px; }
       .level.good { color: var(--apple-green); }
       .level.warning { color: var(--apple-orange); }
       .level.critical { color: var(--apple-red); }
+
       .rec-box { border-radius: 12px; padding: 16px; margin-bottom: 20px; }
       .rec-box.warning { background: rgba(255, 149, 0, 0.08); }
       .rec-box.ok { background: rgba(52, 199, 89, 0.08); color: var(--apple-green); text-align: center; }
@@ -303,7 +333,6 @@ class BatteryManagerCard extends HTMLElement {
   }
 }
 
-// РЕГИСТРАЦИЯ В СПИСКЕ КАРТОЧЕК
 window.customCards = window.customCards || [];
 window.customCards.push({
   type: "battery-manager-card",
