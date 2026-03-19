@@ -221,15 +221,29 @@ class BatteryManagerCard extends HTMLElement {
     });
     html += `</div></div><div class="tab-content">`;
 
+    // ОБНОВЛЕННАЯ ФУНКЦИЯ RENDER ROW (с умной подменой данных)
     const renderRow = (bat, showDrain = false) => {
       let lClass = !bat.isAvailable ? 'problem' : bat.level < (bat.isRechargeable ? this.config.charge_threshold : this.config.threshold) ? 'critical' : bat.level < this.config.warning_threshold ? 'warning' : 'good';
-      let meta = bat.type_str + (!bat.isAvailable ? ` • ${this.localize('no_connection')}` : showDrain && bat.drain_rate > 0 ? ` • ${this.localize('drain_rate', bat.drain_rate.toFixed(1))}` : bat.last_replaced ? ` • ${bat.last_replaced}` : '');
       
-      // Обновленная HTML-структура с классами для Grid
+      let meta = bat.type_str;
+      let levelContent = '—';
+
+      if (!bat.isAvailable) {
+        meta += ` • ${this.localize('no_connection')}`;
+      } else if (showDrain && bat.drain_rate > 0) {
+        // РОКИРОВКА ДЛЯ ВКЛАДКИ "РАСХОД": Заряд в подпись, разряд крупно вправо
+        meta += ` • 🔋 ${bat.level}%`;
+        levelContent = `~${bat.drain_rate.toFixed(1)}<span style="font-size: 14px; font-weight: normal; opacity: 0.8">%</span>`;
+      } else {
+        // СТАНДАРТНЫЙ РЕЖИМ ДЛЯ ОСТАЛЬНЫХ ВКЛАДОК
+        meta += (bat.last_replaced ? ` • ${bat.last_replaced}` : '');
+        levelContent = `${bat.level}%`;
+      }
+
       return `<div class="battery-row ${lClass}" data-entity="${bat.entity_id}">
                 <div class="icon-wrapper ${lClass}"><ha-icon icon="${bat.icon}"></ha-icon></div>
                 <div class="name-col"><div class="name">${bat.name}</div><div class="meta">${meta}</div></div>
-                <div class="level-col"><span class="level ${lClass}">${bat.isAvailable ? bat.level+'%' : '—'}</span></div>
+                <div class="level-col"><span class="level ${lClass}">${levelContent}</span></div>
               </div>`;
     };
 
@@ -278,10 +292,10 @@ class BatteryManagerCard extends HTMLElement {
       .tab-content { padding: 0 16px; }
       .battery-list { display: flex; flex-direction: column; gap: 2px; }
 
-      /* --- ИСПОЛЬЗУЕМ CSS GRID ДЛЯ РОВНЫХ СТРОК --- */
+      /* --- CSS GRID ДЛЯ РОВНЫХ СТРОК --- */
       .battery-row { 
         display: grid; 
-        grid-template-columns: 40px 1fr auto; /* 40px иконка | всё свободное место | авто-ширина под проценты */
+        grid-template-columns: 40px 1fr auto; 
         align-items: center; 
         gap: 16px; 
         padding: 12px 16px; 
@@ -301,7 +315,7 @@ class BatteryManagerCard extends HTMLElement {
       .icon-wrapper.problem { background: rgba(142, 142, 147, 0.12); color: var(--apple-grey); }
 
       .name-col { 
-        min-width: 0; /* Критически важно для обрезки текста в Grid */
+        min-width: 0; 
         display: flex; flex-direction: column; justify-content: center; 
       }
       .name { font-weight: 600; font-size: 17px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
