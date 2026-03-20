@@ -117,7 +117,6 @@ const translations = {
 };
 
 class BatteryManagerCard extends HTMLElement {
-  // Вызов визуального редактора
   static getConfigElement() {
     return document.createElement("battery-manager-card-editor");
   }
@@ -127,7 +126,9 @@ class BatteryManagerCard extends HTMLElement {
       type: "custom:battery-manager-card",
       charge_threshold: 15,
       threshold: 20,
-      drain_count: 10
+      drain_count: 10,
+      name_font_size: 17,
+      level_font_size: 20
     };
   }
 
@@ -137,6 +138,8 @@ class BatteryManagerCard extends HTMLElement {
       charge_threshold: config.charge_threshold !== undefined ? config.charge_threshold : 15, 
       warning_threshold: config.warning_threshold !== undefined ? config.warning_threshold : 40, 
       drain_count: config.drain_count !== undefined ? config.drain_count : 10, 
+      name_font_size: config.name_font_size !== undefined ? config.name_font_size : 17,
+      level_font_size: config.level_font_size !== undefined ? config.level_font_size : 20,
       ...config
     };
     if (!this.activeTab) this.activeTab = 'all';
@@ -172,6 +175,10 @@ class BatteryManagerCard extends HTMLElement {
       this.addStyles();
     }
     this.header.innerText = this.config.title !== undefined ? this.config.title : this.localize('title_default');
+    
+    // Передаем настройки шрифта в CSS через переменные
+    this.style.setProperty('--name-font-size', `${this.config.name_font_size}px`);
+    this.style.setProperty('--level-font-size', `${this.config.level_font_size}px`);
     
     let batteries = [];
     let typesToBuy = {}; let typesToCharge = {}; let allTypesInventory = {}; 
@@ -300,10 +307,13 @@ class BatteryManagerCard extends HTMLElement {
       .icon-wrapper.critical { background: rgba(255, 59, 48, 0.12); color: var(--apple-red); }
       .icon-wrapper.problem { background: rgba(142, 142, 147, 0.12); color: var(--apple-grey); }
       .name-col { min-width: 0; display: flex; flex-direction: column; justify-content: center; }
-      .name { font-weight: 600; font-size: 17px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+      
+      /* Используем CSS-переменные для шрифтов */
+      .name { font-weight: 600; font-size: var(--name-font-size, 17px); white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+      .level { font-weight: 700; font-size: var(--level-font-size, 20px); }
+      
       .meta { font-size: 13px; color: var(--secondary-text-color); white-space: nowrap; overflow: hidden; text-overflow: ellipsis; margin-top: 2px; }
       .level-col { text-align: right; white-space: nowrap; }
-      .level { font-weight: 700; font-size: 20px; }
       .level.good { color: var(--apple-green); }
       .level.warning { color: var(--apple-orange); }
       .level.critical { color: var(--apple-red); }
@@ -360,6 +370,14 @@ class BatteryManagerCardEditor extends HTMLElement {
           <label for="drain_count">📉 Устройств на вкладке "Расход"</label>
           <input type="number" id="drain_count" value="${this._config.drain_count !== undefined ? this._config.drain_count : 10}">
         </div>
+        <div class="option">
+          <label for="name_font_size">🔤 Размер шрифта для названий (px)</label>
+          <input type="number" id="name_font_size" value="${this._config.name_font_size !== undefined ? this._config.name_font_size : 17}">
+        </div>
+        <div class="option">
+          <label for="level_font_size">🔢 Размер шрифта для заряда (px)</label>
+          <input type="number" id="level_font_size" value="${this._config.level_font_size !== undefined ? this._config.level_font_size : 20}">
+        </div>
       </div>
       <style>
         .card-config { display: flex; flex-direction: column; gap: 16px; margin-bottom: 16px; font-family: var(--paper-font-body1_-_font-family); }
@@ -381,14 +399,12 @@ class BatteryManagerCardEditor extends HTMLElement {
     const target = ev.target;
     const newConfig = Object.assign({}, this._config);
     
-    // Если текстовое поле - оставляем текст, если число - делаем числом
     if (target.id === 'title') {
       newConfig[target.id] = target.value;
     } else {
       newConfig[target.id] = Number(target.value);
     }
 
-    // Идеальный кастомный эвент для HA
     const event = new CustomEvent("config-changed", {
       detail: { config: newConfig },
       bubbles: true,
