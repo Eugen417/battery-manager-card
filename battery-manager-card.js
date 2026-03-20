@@ -20,7 +20,15 @@ const translations = {
     in_use: "In use (Inventory)",
     drain_speed: "Discharge rate",
     no_drain_data: "Not enough replacement data",
-    total_devices: "Total devices: {0}"
+    total_devices: "Total devices: {0}",
+    // Editor Translations
+    editor_title: "Card title",
+    editor_title_ph: "Leave empty for default",
+    editor_charge: "🔌 Rechargeable threshold (%)",
+    editor_bat: "🔋 Battery threshold (%)",
+    editor_drain: "📉 Devices on 'Drain' tab",
+    editor_name_size: "🔤 Name font size (px)",
+    editor_level_size: "🔢 Level font size (px)"
   },
   ru: {
     title_default: "Элементы питания",
@@ -43,7 +51,15 @@ const translations = {
     in_use: "Используется в доме",
     drain_speed: "Скорость разряда",
     no_drain_data: "Недостаточно данных о заменах",
-    total_devices: "Всего устройств: {0}"
+    total_devices: "Всего устройств: {0}",
+    // Editor Translations
+    editor_title: "Название карточки",
+    editor_title_ph: "Оставьте пустым для стандарта",
+    editor_charge: "🔌 Порог заряда аккумуляторов (%)",
+    editor_bat: "🔋 Порог заряда батареек (%)",
+    editor_drain: "📉 Устройств на вкладке 'Расход'",
+    editor_name_size: "🔤 Размер шрифта для названий (px)",
+    editor_level_size: "🔢 Размер шрифта для заряда (px)"
   },
   de: {
     title_default: "Batteriestatus",
@@ -66,7 +82,15 @@ const translations = {
     in_use: "Im Einsatz (Bestand)",
     drain_speed: "Entladegeschwindigkeit",
     no_drain_data: "Nicht genug Ersatzdaten",
-    total_devices: "Geräte gesamt: {0}"
+    total_devices: "Geräte gesamt: {0}",
+    // Editor Translations
+    editor_title: "Kartentitel",
+    editor_title_ph: "Leer lassen für Standard",
+    editor_charge: "🔌 Schwellenwert Akkus (%)",
+    editor_bat: "🔋 Schwellenwert Batterien (%)",
+    editor_drain: "📉 Geräte im 'Verbrauch'-Tab",
+    editor_name_size: "🔤 Schriftgröße Name (px)",
+    editor_level_size: "🔢 Schriftgröße Ladestand (px)"
   },
   es: {
     title_default: "Estado de Baterías",
@@ -89,7 +113,15 @@ const translations = {
     in_use: "En uso (Inventario)",
     drain_speed: "Tasa de descarga",
     no_drain_data: "Faltan datos de reemplazo",
-    total_devices: "Total de dispositivos: {0}"
+    total_devices: "Total de dispositivos: {0}",
+    // Editor Translations
+    editor_title: "Título de la tarjeta",
+    editor_title_ph: "Dejar en blanco para predeterminado",
+    editor_charge: "🔌 Umbral para recargables (%)",
+    editor_bat: "🔋 Umbral para baterías (%)",
+    editor_drain: "📉 Dispositivos en pestaña 'Descarga'",
+    editor_name_size: "🔤 Tamaño fuente del nombre (px)",
+    editor_level_size: "🔢 Tamaño fuente del nivel (px)"
   },
   fr: {
     title_default: "État des Batteries",
@@ -112,7 +144,15 @@ const translations = {
     in_use: "En cours d'utilisation",
     drain_speed: "Taux de décharge",
     no_drain_data: "Pas assez de données de remplacement",
-    total_devices: "Total des appareils : {0}"
+    total_devices: "Total des appareils : {0}",
+    // Editor Translations
+    editor_title: "Titre de la carte",
+    editor_title_ph: "Laisser vide par défaut",
+    editor_charge: "🔌 Seuil pour rechargeables (%)",
+    editor_bat: "🔋 Seuil pour piles (%)",
+    editor_drain: "📉 Appareils dans l'onglet 'Décharge'",
+    editor_name_size: "🔤 Taille de police du nom (px)",
+    editor_level_size: "🔢 Taille de police du niveau (px)"
   }
 };
 
@@ -174,7 +214,7 @@ class BatteryManagerCard extends HTMLElement {
       this.header = this.querySelector('.card-header');
       this.addStyles();
     }
-    this.header.innerText = this.config.title !== undefined ? this.config.title : this.localize('title_default');
+    this.header.innerText = this.config.title !== undefined && this.config.title !== "" ? this.config.title : this.localize('title_default');
     
     // Передаем настройки шрифта в CSS через переменные
     this.style.setProperty('--name-font-size', `${this.config.name_font_size}px`);
@@ -348,6 +388,14 @@ class BatteryManagerCardEditor extends HTMLElement {
     this.renderForm();
   }
 
+  // Функция локализации для редактора
+  localize(key) {
+    const lang = (this._hass && this._hass.language) ? this._hass.language.substring(0, 2) : 'en';
+    let translated = translations[lang] ? translations[lang][key] : translations['en'][key];
+    if (!translated) translated = translations['en'][key];
+    return translated;
+  }
+
   renderForm() {
     if (!this._config || !this._hass || this._rendered) return;
     this._rendered = true;
@@ -355,27 +403,27 @@ class BatteryManagerCardEditor extends HTMLElement {
     this.innerHTML = `
       <div class="card-config">
         <div class="option">
-          <label for="title">Название карточки</label>
-          <input type="text" id="title" value="${this._config.title !== undefined ? this._config.title : ""}" placeholder="Оставьте пустым для стандарта">
+          <label for="title">${this.localize('editor_title')}</label>
+          <input type="text" id="title" value="${this._config.title !== undefined ? this._config.title : ""}" placeholder="${this.localize('editor_title_ph')}">
         </div>
         <div class="option">
-          <label for="charge_threshold">🔌 Порог заряда аккумуляторов (%)</label>
+          <label for="charge_threshold">${this.localize('editor_charge')}</label>
           <input type="number" id="charge_threshold" value="${this._config.charge_threshold !== undefined ? this._config.charge_threshold : 15}">
         </div>
         <div class="option">
-          <label for="threshold">🔋 Порог заряда батареек (%)</label>
+          <label for="threshold">${this.localize('editor_bat')}</label>
           <input type="number" id="threshold" value="${this._config.threshold !== undefined ? this._config.threshold : 20}">
         </div>
         <div class="option">
-          <label for="drain_count">📉 Устройств на вкладке "Расход"</label>
+          <label for="drain_count">${this.localize('editor_drain')}</label>
           <input type="number" id="drain_count" value="${this._config.drain_count !== undefined ? this._config.drain_count : 10}">
         </div>
         <div class="option">
-          <label for="name_font_size">🔤 Размер шрифта для названий (px)</label>
+          <label for="name_font_size">${this.localize('editor_name_size')}</label>
           <input type="number" id="name_font_size" value="${this._config.name_font_size !== undefined ? this._config.name_font_size : 17}">
         </div>
         <div class="option">
-          <label for="level_font_size">🔢 Размер шрифта для заряда (px)</label>
+          <label for="level_font_size">${this.localize('editor_level_size')}</label>
           <input type="number" id="level_font_size" value="${this._config.level_font_size !== undefined ? this._config.level_font_size : 20}">
         </div>
       </div>
