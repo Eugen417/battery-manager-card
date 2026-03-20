@@ -1,158 +1,183 @@
 # 🔋 Battery Manager Card
 
+[![hacs_badge](https://img.shields.io/badge/HACS-Custom-41BDF5.svg?style=for-the-badge)](https://github.com/hacs/integration)
+[![GitHub Release](https://img.shields.io/github/v/release/Eugen417/battery-manager-card?style=for-the-badge)](https://github.com/Eugen417/battery-manager-card/releases)
+
+
 [🇷🇺 Русский](#-русский) | [🇬🇧 English](#-english) | [🇩🇪 Deutsch](#-deutsch) | [🇪🇸 Español](#-español) | [🇫🇷 Français](#-français)
 
 ---
 
 ## 🇷🇺 Русский
 
-Современная и интерактивная карточка для Home Assistant, работающая в связке с интеграцией **HA-Battery-Notes**. Дизайн выполнен в минималистичном стиле.
+Современная и интерактивная карточка для Home Assistant, работающая в связке с интеграцией **HA-Battery-Notes**. Дизайн выполнен в минималистичном стиле (Apple-style) с использованием CSS Grid.
 
 ### ✨ Возможности
-* **Автоматический поиск**: Сама находит все устройства с классом `battery`.
-* **Вкладки**: ОБЗОР (все), ВНИМАНИЕ (проблемные), ТИП (инвентарь), РАСХОД (аналитика).
-* **Умная аналитика**: Расход заряда (% в день) на основе даты последней замены.
-* **Инвентарь**: Общее количество батареек в доме по типам.
+* 🖥️ **Визуальный редактор (UI)**: Никакого YAML! Все параметры настраиваются прямо в интерфейсе.
+* 🔍 **Автоматический поиск**: Сама находит все устройства с классом `battery`.
+* 📑 **Вкладки**: ОБЗОР (все), ВНИМАНИЕ (проблемные), ТИП (инвентарь), РАСХОД (аналитика).
+* 📉 **Умная аналитика**: Расход заряда (% в день) на основе даты последней замены.
+* 🔠 **Кастомизация**: Возможность изменить размер шрифтов под ваш дашборд.
+* 📦 **Инвентарь**: Общее количество батареек в доме по типам.
 
 ### 🛠 Установка
 **Вариант 1: HACS (Рекомендуется)**
-1. **HACS** -> **Интерфейс** -> Три точки -> **Пользовательские репозитории**.
+1. **HACS** -> Три точки -> **Пользовательские репозитории**.
 2. Ссылка: `https://github.com/Eugen417/battery-manager-card`, категория **Lovelace** (Панель).
-3. Установите и обновите страницу (Ctrl+F5).
+3. Установите карточку.
+4. ⚠️ **ВАЖНО:** Очистите кэш браузера (Ctrl+F5) или кэш фронтенда в мобильном приложении!
 
 **Вариант 2: Вручную**
 1. Скопируйте файл `battery-manager-card.js` в `/config/www/battery_manager_card/`.
-2. Добавьте ресурс в настройках системы или в `configuration.yaml` (секция `lovelace: resources:`): `/local/battery_manager_card/battery-manager-card.js`.
+2. Добавьте ресурс в настройках: **Настройки -> Панели управления -> Ресурсы**: `/local/battery_manager_card/battery-manager-card.js?v=1.0.7` (Модуль JavaScript).
 
-### ⚙️ Добавление на дашборд
-Нажмите "Добавить карточку" -> "Вручную" (Manual Card) и вставьте:
+### ⚙️ Настройка
+Просто добавьте карточку на дашборд и настройте её через **визуальный интерфейс**. 
+Для любителей YAML доступна ручная конфигурация:
 ```yaml
 type: custom:battery-manager-card
+title: Элементы питания
 charge_threshold: 15 # Порог заряда для аккумуляторов (%)
 threshold: 20        # Порог критического заряда для обычных батареек (%)
 drain_count: 10      # Количество устройств на вкладке "РАСХОД"
+name_font_size: 17   # Размер шрифта для названий (px)
+level_font_size: 20  # Размер шрифта для заряда (px)
 ```
 
 ---
 
 ## 🇬🇧 English
 
-Modern and interactive custom card for Home Assistant, designed for **HA-Battery-Notes**. Features a minimalist design.
+Modern and interactive custom card for Home Assistant, designed for **HA-Battery-Notes**. Features a minimalist Apple-style design using CSS Grid.
 
 ### ✨ Features
-* **Auto-discovery**: Automatically finds all devices with the `battery` class.
-* **Tabs**: OVERVIEW (all), ATTENTION (issues), TYPE (inventory), DRAIN (analytics).
-* **Smart Analytics**: Battery drain rate (% per day) based on replacement date.
-* **Inventory Tracking**: Total count of all batteries in your home by type.
+* 🖥️ **Full Visual Editor (UI)**: No YAML required! Configure everything directly in the interface.
+* 🔍 **Auto-discovery**: Automatically finds all devices with the `battery` class.
+* 📑 **Tabs**: OVERVIEW (all), ATTENTION (issues), TYPE (inventory), DRAIN (analytics).
+* 📉 **Smart Analytics**: Battery drain rate (% per day) based on replacement date.
+* 🔠 **Customizable Fonts**: Change font sizes to fit your dashboard perfectly.
+* 📦 **Inventory Tracking**: Total count of all batteries in your home by type.
 
 ### 🛠 Installation
 **Option 1: HACS (Recommended)**
-1. **HACS** -> **Frontend** -> Three dots -> **Custom repositories**.
+1. **HACS** -> Three dots -> **Custom repositories**.
 2. URL: `https://github.com/Eugen417/battery-manager-card`, Category: **Lovelace** (Dashboard).
-3. Install and refresh the page (Ctrl+F5).
+3. Install the card.
+4. ⚠️ **IMPORTANT:** Clear your browser cache (Ctrl+F5) or frontend cache in the companion app!
 
 **Option 2: Manual**
 1. Copy the `battery-manager-card.js` file to `/config/www/battery_manager_card/`.
-2. Add the resource in system settings or in `configuration.yaml` (under `lovelace: resources:`): `/local/battery_manager_card/battery-manager-card.js`.
+2. Add the resource in Settings -> Dashboards -> Resources: `/local/battery_manager_card/battery-manager-card.js?v=1.0.7` (JavaScript Module).
 
-### ⚙️ Dashboard Configuration
-Add a "Manual" card on your dashboard and paste:
+### ⚙️ Configuration
+Simply add the card to your dashboard and use the **Visual Editor**.
+For advanced YAML users:
 ```yaml
 type: custom:battery-manager-card
+title: Battery Status
 charge_threshold: 15 # Critical charge level for rechargeable batteries (%)
 threshold: 20        # Critical charge level for standard batteries (%)
 drain_count: 10      # Number of devices in the "DRAIN" tab
+name_font_size: 17   # Font size for device names (px)
+level_font_size: 20  # Font size for battery levels (px)
 ```
 
 ---
 
 ## 🇩🇪 Deutsch
 
-Moderne, interaktive benutzerdefinierte Karte für Home Assistant, optimiert für **HA-Battery-Notes**. Minimalistisches Design.
+Moderne, interaktive benutzerdefinierte Karte für Home Assistant, optimiert für **HA-Battery-Notes**. Minimalistisches Apple-Style Design mit CSS Grid.
 
 ### ✨ Funktionen
-* **Auto-Discovery**: Findet automatisch alle Geräte mit der Klasse `battery`.
-* **Tabs**: ÜBERSICHT (alle), ACHTUNG (Probleme), TYP (Bestand), VERBRAUCH (Analyse).
-* **Intelligente Analyse**: Berechnet den täglichen Verbrauch (% pro Tag) basierend auf dem Austauschdatum.
-* **Bestandsaufnahme**: Gesamtanzahl aller verwendeten Batterietypen in Ihrem Zuhause.
+* 🖥️ **Visueller Editor (UI)**: Kein YAML nötig! Alles direkt im Interface konfigurieren.
+* 🔍 **Auto-Discovery**: Findet automatisch alle Geräte mit der Klasse `battery`.
+* 📑 **Tabs**: ÜBERSICHT (alle), ACHTUNG (Probleme), TYP (Bestand), VERBRAUCH (Analyse).
+* 📉 **Intelligente Analyse**: Berechnet den täglichen Verbrauch (% pro Tag).
+* 🔠 **Anpassbare Schriftarten**: Ändern Sie die Schriftgrößen für Ihr Dashboard.
+* 📦 **Bestandsaufnahme**: Gesamtanzahl aller Batterietypen in Ihrem Zuhause.
 
 ### 🛠 Installation
 **Option 1: HACS (Empfohlen)**
-1. **HACS** -> **Frontend** -> Drei Punkte -> **Benutzerdefinierte Repositories**.
+1. **HACS** -> Drei Punkte -> **Benutzerdefinierte Repositories**.
 2. URL: `https://github.com/Eugen417/battery-manager-card`, Kategorie: **Lovelace** (Dashboard).
-3. Installieren und Seite neu laden (Strg+F5).
+3. Installieren.
+4. ⚠️ **WICHTIG:** Leeren Sie Ihren Browser-Cache (Strg+F5)!
 
 **Option 2: Manuell**
-1. Kopieren Sie die Datei `battery-manager-card.js` nach `/config/www/battery_manager_card/`.
-2. Fügen Sie die Ressource in den Systemeinstellungen oder in `configuration.yaml` (unter `lovelace: resources:`) hinzu: `/local/battery_manager_card/battery-manager-card.js`.
+1. Kopieren Sie `battery-manager-card.js` nach `/config/www/battery_manager_card/`.
+2. Ressource hinzufügen unter Einstellungen -> Dashboards -> Ressourcen: `/local/battery_manager_card/battery-manager-card.js?v=1.0.7` (JavaScript Modul).
 
-### ⚙️ Dashboard-Konfiguration
-Fügen Sie eine "Manuelle Karte" auf Ihrem Dashboard hinzu und fügen Sie ein:
+### ⚙️ Konfiguration
+Nutzen Sie den **Visuellen Editor** im Dashboard. Für YAML:
 ```yaml
 type: custom:battery-manager-card
-charge_threshold: 15 # Kritischer Stand für Akkus (%)
-threshold: 20        # Kritischer Stand für Standardbatterien (%)
-drain_count: 10      # Anzahl der Geräte im Tab "VERBRAUCH"
+charge_threshold: 15 
+threshold: 20        
+drain_count: 10      
+name_font_size: 17   
+level_font_size: 20  
 ```
 
 ---
 
 ## 🇪🇸 Español
 
-Tarjeta interactiva moderna para Home Assistant, diseñada para **HA-Battery-Notes**. Diseño minimalista.
+Tarjeta interactiva moderna para Home Assistant, diseñada para **HA-Battery-Notes**. Diseño minimalista tipo Apple usando CSS Grid.
 
 ### ✨ Características
-* **Auto-descubrimiento**: Encuentra automáticamente todos los dispositivos con la clase `battery`.
-* **Pestañas**: RESUMEN (todos), ATENCIÓN (problemas), TIPO (inventario), DESCARGA (análisis).
-* **Análisis inteligente**: Calcula el consumo diario (% por día) basado en la fecha de reemplazo.
-* **Inventario**: Recuento total de baterías por tipo en el hogar.
+* 🖥️ **Editor Visual (UI)**: ¡Sin necesidad de YAML!
+* 🔍 **Auto-descubrimiento**: Encuentra dispositivos con la clase `battery`.
+* 📑 **Pestañas**: RESUMEN (todos), ATENCIÓN (problemas), TIPO (inventario), DESCARGA (análisis).
+* 📉 **Análisis inteligente**: Consumo diario (% por día).
+* 🔠 **Fuentes personalizables**: Cambie el tamaño de fuente para nombres y porcentajes.
+* 📦 **Inventario**: Recuento total de baterías por tipo.
 
 ### 🛠 Instalación
 **Opción 1: HACS (Recomendado)**
-1. **HACS** -> **Interfaz** -> Tres puntos -> **Repositorios personalizados**.
+1. **HACS** -> Tres puntos -> **Repositorios personalizados**.
 2. URL: `https://github.com/Eugen417/battery-manager-card`, Categoría: **Lovelace** (Panel).
-3. Instalar y actualizar la página (Ctrl+F5).
+3. Instalar.
+4. ⚠️ **IMPORTANTE:** ¡Limpie la caché de su navegador (Ctrl+F5)!
 
-**Opción 2: Manual**
-1. Copie el archivo `battery-manager-card.js` en `/config/www/battery_manager_card/`.
-2. Añada el recurso en la configuración del sistema o en `configuration.yaml` (bajo `lovelace: resources:`): `/local/battery_manager_card/battery-manager-card.js`.
-
-### ⚙️ Configuración del Panel
-Añada una tarjeta "Manual" en su panel y pegue:
+### ⚙️ Configuración
+Use el **Editor Visual**. Ejemplo YAML:
 ```yaml
 type: custom:battery-manager-card
-charge_threshold: 15 # Nivel crítico para baterías recargables (%)
-threshold: 20        # Nivel crítico para pilas estándar (%)
-drain_count: 10      # Dispositivos en la pestaña "DESCARGA"
+charge_threshold: 15 
+threshold: 20        
+drain_count: 10      
+name_font_size: 17   
+level_font_size: 20  
 ```
 
 ---
 
 ## 🇫🇷 Français
 
-Carte interactive moderne pour Home Assistant, conçue pour **HA-Battery-Notes**. Design minimaliste.
+Carte interactive moderne pour Home Assistant, conçue pour **HA-Battery-Notes**. Design minimaliste style Apple avec CSS Grid.
 
 ### ✨ Fonctionnalités
-* **Détection automatique**: Trouve automatiquement tous les appareils avec la classe `battery`.
-* **Onglets**: APERÇU (tous), ATTENTION (problèmes), TYPE (inventaire), DÉCHARGE (analyse).
-* **Analyse intelligente**: Calcule le taux de décharge (% par jour) basé sur la date de remplacement.
-* **Inventaire**: Nombre total de piles par type dans la maison.
+* 🖥️ **Éditeur Visuel (UI)**: Pas de YAML requis !
+* 🔍 **Détection automatique**: Trouve les appareils avec la classe `battery`.
+* 📑 **Onglets**: APERÇU (tous), ATTENTION (problèmes), TYPE (inventaire), DÉCHARGE (analyse).
+* 📉 **Analyse intelligente**: Taux de décharge (% par jour).
+* 🔠 **Polices personnalisables**: Modifiez la taille du texte.
+* 📦 **Inventaire**: Nombre total de piles par type.
 
 ### 🛠 Installation
 **Option 1: HACS (Recommandé)**
-1. **HACS** -> **Interface** -> Trois points -> **Dépôts personnalisés**.
+1. **HACS** -> Trois points -> **Dépôts personnalisés**.
 2. URL: `https://github.com/Eugen417/battery-manager-card`, Catégorie: **Lovelace** (Tableau de bord).
-3. Installer et rafraîchir la page (Ctrl+F5).
+3. Installer.
+4. ⚠️ **IMPORTANT:** Videz le cache de votre navigateur (Ctrl+F5) !
 
-**Option 2: Manuel**
-1. Copiez le fichier `battery-manager-card.js` dans `/config/www/battery_manager_card/`.
-2. Ajoutez la ressource dans les paramètres du système ou dans `configuration.yaml` (sous `lovelace: resources:`): `/local/battery_manager_card/battery-manager-card.js`.
-
-### ⚙️ Configuration du Tableau de Bord
-Ajoutez une carte "Manuel" sur votre tableau de bord et collez:
+### ⚙️ Configuration
+Utilisez l'**Éditeur Visuel**. Exemple YAML:
 ```yaml
 type: custom:battery-manager-card
-charge_threshold: 15 # Niveau critique pour les batteries rechargeables (%)
-threshold: 20        # Niveau critique pour les piles standard (%)
-drain_count: 10      # Nombre d'appareils dans l'onglet "DÉCHARGE"
+charge_threshold: 15 
+threshold: 20        
+drain_count: 10      
+name_font_size: 17   
+level_font_size: 20  
 ```
