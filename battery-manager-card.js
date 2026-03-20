@@ -117,15 +117,9 @@ const translations = {
 };
 
 class BatteryManagerCard extends HTMLElement {
-  setConfig(config) {
-    this.config = {
-      threshold: config.threshold !== undefined ? config.threshold : 20, 
-      charge_threshold: config.charge_threshold !== undefined ? config.charge_threshold : 15, 
-      warning_threshold: config.warning_threshold !== undefined ? config.warning_threshold : 40, 
-      drain_count: config.drain_count !== undefined ? config.drain_count : 10, 
-      ...config
-    };
-    if (!this.activeTab) this.activeTab = 'all';
+  // Вызов визуального редактора
+  static getConfigElement() {
+    return document.createElement("battery-manager-card-editor");
   }
 
   static getStubConfig() {
@@ -135,6 +129,17 @@ class BatteryManagerCard extends HTMLElement {
       threshold: 20,
       drain_count: 10
     };
+  }
+
+  setConfig(config) {
+    this.config = {
+      threshold: config.threshold !== undefined ? config.threshold : 20, 
+      charge_threshold: config.charge_threshold !== undefined ? config.charge_threshold : 15, 
+      warning_threshold: config.warning_threshold !== undefined ? config.warning_threshold : 40, 
+      drain_count: config.drain_count !== undefined ? config.drain_count : 10, 
+      ...config
+    };
+    if (!this.activeTab) this.activeTab = 'all';
   }
 
   static get cardSize() {
@@ -221,21 +226,17 @@ class BatteryManagerCard extends HTMLElement {
     });
     html += `</div></div><div class="tab-content">`;
 
-    // ОБНОВЛЕННАЯ ФУНКЦИЯ RENDER ROW (с умной подменой данных)
     const renderRow = (bat, showDrain = false) => {
       let lClass = !bat.isAvailable ? 'problem' : bat.level < (bat.isRechargeable ? this.config.charge_threshold : this.config.threshold) ? 'critical' : bat.level < this.config.warning_threshold ? 'warning' : 'good';
-      
       let meta = bat.type_str;
       let levelContent = '—';
 
       if (!bat.isAvailable) {
         meta += ` • ${this.localize('no_connection')}`;
       } else if (showDrain && bat.drain_rate > 0) {
-        // РОКИРОВКА ДЛЯ ВКЛАДКИ "РАСХОД": Заряд в подпись, разряд крупно вправо
         meta += ` • 🔋 ${bat.level}%`;
         levelContent = `~${bat.drain_rate.toFixed(1)}<span style="font-size: 14px; font-weight: normal; opacity: 0.8">%</span>`;
       } else {
-        // СТАНДАРТНЫЙ РЕЖИМ ДЛЯ ОСТАЛЬНЫХ ВКЛАДОК
         meta += (bat.last_replaced ? ` • ${bat.last_replaced}` : '');
         levelContent = `${bat.level}%`;
       }
@@ -291,45 +292,21 @@ class BatteryManagerCard extends HTMLElement {
       .tab.active { background: var(--card-background-color); box-shadow: 0 3px 8px rgba(0,0,0,0.1); }
       .tab-content { padding: 0 16px; }
       .battery-list { display: flex; flex-direction: column; gap: 2px; }
-
-      /* --- CSS GRID ДЛЯ РОВНЫХ СТРОК --- */
-      .battery-row { 
-        display: grid; 
-        grid-template-columns: 40px 1fr auto; 
-        align-items: center; 
-        gap: 16px; 
-        padding: 12px 16px; 
-        border-radius: 12px; 
-        margin: 0 -8px; 
-        cursor: pointer; 
-      }
+      .battery-row { display: grid; grid-template-columns: 40px 1fr auto; align-items: center; gap: 16px; padding: 12px 16px; border-radius: 12px; margin: 0 -8px; cursor: pointer; }
       .battery-row:hover { background: var(--secondary-background-color); }
-
-      .icon-wrapper { 
-        width: 40px; height: 40px; border-radius: 10px; 
-        display: flex; align-items: center; justify-content: center; 
-      }
+      .icon-wrapper { width: 40px; height: 40px; border-radius: 10px; display: flex; align-items: center; justify-content: center; }
       .icon-wrapper.good { background: rgba(52, 199, 89, 0.12); color: var(--apple-green); }
       .icon-wrapper.warning { background: rgba(255, 149, 0, 0.12); color: var(--apple-orange); }
       .icon-wrapper.critical { background: rgba(255, 59, 48, 0.12); color: var(--apple-red); }
       .icon-wrapper.problem { background: rgba(142, 142, 147, 0.12); color: var(--apple-grey); }
-
-      .name-col { 
-        min-width: 0; 
-        display: flex; flex-direction: column; justify-content: center; 
-      }
+      .name-col { min-width: 0; display: flex; flex-direction: column; justify-content: center; }
       .name { font-weight: 600; font-size: 17px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
       .meta { font-size: 13px; color: var(--secondary-text-color); white-space: nowrap; overflow: hidden; text-overflow: ellipsis; margin-top: 2px; }
-
-      .level-col { 
-        text-align: right; 
-        white-space: nowrap; 
-      }
+      .level-col { text-align: right; white-space: nowrap; }
       .level { font-weight: 700; font-size: 20px; }
       .level.good { color: var(--apple-green); }
       .level.warning { color: var(--apple-orange); }
       .level.critical { color: var(--apple-red); }
-
       .rec-box { border-radius: 12px; padding: 16px; margin-bottom: 20px; }
       .rec-box.warning { background: rgba(255, 149, 0, 0.08); }
       .rec-box.ok { background: rgba(52, 199, 89, 0.08); color: var(--apple-green); text-align: center; }
@@ -347,6 +324,83 @@ class BatteryManagerCard extends HTMLElement {
   }
 }
 
+// ==========================================
+// ВИЗУАЛЬНЫЙ РЕДАКТОР КАРТОЧКИ (GUI)
+// ==========================================
+class BatteryManagerCardEditor extends HTMLElement {
+  setConfig(config) {
+    this._config = config;
+    this.renderForm();
+  }
+
+  set hass(hass) {
+    this._hass = hass;
+    this.renderForm();
+  }
+
+  renderForm() {
+    if (!this._config || !this._hass || this._rendered) return;
+    this._rendered = true;
+
+    this.innerHTML = `
+      <div class="card-config">
+        <div class="option">
+          <label for="title">Название карточки</label>
+          <input type="text" id="title" value="${this._config.title !== undefined ? this._config.title : ""}" placeholder="Оставьте пустым для стандарта">
+        </div>
+        <div class="option">
+          <label for="charge_threshold">🔌 Порог заряда аккумуляторов (%)</label>
+          <input type="number" id="charge_threshold" value="${this._config.charge_threshold !== undefined ? this._config.charge_threshold : 15}">
+        </div>
+        <div class="option">
+          <label for="threshold">🔋 Порог заряда батареек (%)</label>
+          <input type="number" id="threshold" value="${this._config.threshold !== undefined ? this._config.threshold : 20}">
+        </div>
+        <div class="option">
+          <label for="drain_count">📉 Устройств на вкладке "Расход"</label>
+          <input type="number" id="drain_count" value="${this._config.drain_count !== undefined ? this._config.drain_count : 10}">
+        </div>
+      </div>
+      <style>
+        .card-config { display: flex; flex-direction: column; gap: 16px; margin-bottom: 16px; font-family: var(--paper-font-body1_-_font-family); }
+        .option { display: flex; flex-direction: column; gap: 8px; }
+        .option label { font-size: 14px; font-weight: 500; color: var(--primary-text-color); }
+        .option input { padding: 10px; font-size: 16px; border: 1px solid var(--divider-color); border-radius: 4px; background: var(--card-background-color); color: var(--primary-text-color); outline: none; }
+        .option input:focus { border-color: var(--primary-color); }
+      </style>
+    `;
+
+    this.querySelectorAll('input').forEach(input => {
+      input.addEventListener('change', this.valueChanged.bind(this));
+      input.addEventListener('input', this.valueChanged.bind(this)); 
+    });
+  }
+
+  valueChanged(ev) {
+    if (!this._config) return;
+    const target = ev.target;
+    const newConfig = Object.assign({}, this._config);
+    
+    // Если текстовое поле - оставляем текст, если число - делаем числом
+    if (target.id === 'title') {
+      newConfig[target.id] = target.value;
+    } else {
+      newConfig[target.id] = Number(target.value);
+    }
+
+    // Идеальный кастомный эвент для HA
+    const event = new CustomEvent("config-changed", {
+      detail: { config: newConfig },
+      bubbles: true,
+      composed: true,
+    });
+    this.dispatchEvent(event);
+  }
+}
+
+customElements.define('battery-manager-card-editor', BatteryManagerCardEditor);
+customElements.define('battery-manager-card', BatteryManagerCard);
+
 window.customCards = window.customCards || [];
 window.customCards.push({
   type: "battery-manager-card",
@@ -354,5 +408,3 @@ window.customCards.push({
   description: "Modern Apple-style battery status card with auto-discovery and drain analytics.",
   preview: true
 });
-
-customElements.define('battery-manager-card', BatteryManagerCard);
