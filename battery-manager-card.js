@@ -1,6 +1,6 @@
-// Version: v1.0.8
+// Version: v1.0.9
 console.info(
-  `%c BATTERY-MANAGER-CARD %c v1.0.8 `,
+  `%c BATTERY-MANAGER-CARD %c v1.0.9 `,
   'color: white; background: #34c759; font-weight: 700;',
   'color: #34c759; background: white; font-weight: 700;'
 );
@@ -25,6 +25,7 @@ const translations = {
     need_charge: "🔌 Charging required (<{0}%)",
     need_buy: "🛒 Buy urgently (<{0}%)",
     pcs: "pcs",
+    days: "d.",
     in_use: "In use (Inventory)",
     drain_speed: "Discharge rate",
     no_drain_data: "Not enough replacement data",
@@ -58,6 +59,7 @@ const translations = {
     need_charge: "🔌 Требуется зарядка (<{0}%)",
     need_buy: "🛒 Срочно купить (<{0}%)",
     pcs: "шт.",
+    days: "дн.",
     in_use: "Используется в доме",
     drain_speed: "Скорость разряда",
     no_drain_data: "Недостаточно данных о заменах",
@@ -91,6 +93,7 @@ const translations = {
     need_charge: "🔌 Laden erforderlich (<{0}%)",
     need_buy: "🛒 Dringend kaufen (<{0}%)",
     pcs: "Stk.",
+    days: "T.",
     in_use: "Im Einsatz (Bestand)",
     drain_speed: "Entladegeschwindigkeit",
     no_drain_data: "Nicht genug Ersatzdaten",
@@ -124,6 +127,7 @@ const translations = {
     need_charge: "🔌 Requiere carga (<{0}%)",
     need_buy: "🛒 Comprar urgente (<{0}%)",
     pcs: "un.",
+    days: "d.",
     in_use: "En uso (Inventario)",
     drain_speed: "Tasa de descarga",
     no_drain_data: "Faltan datos de reemplazo",
@@ -157,6 +161,7 @@ const translations = {
     need_charge: "🔌 Chargement requis (<{0}%)",
     need_buy: "🛒 Acheter d'urgence (<{0}%)",
     pcs: "pcs",
+    days: "j.",
     in_use: "En cours d'utilisation",
     drain_speed: "Taux de décharge",
     no_drain_data: "Pas assez de données de remplacement",
@@ -235,7 +240,6 @@ class BatteryManagerCard extends HTMLElement {
     }
     this.header.innerText = this.config.title !== undefined && this.config.title !== "" ? this.config.title : this.localize('title_default');
     
-    // Передаем настройки шрифта в CSS
     this.style.setProperty('--name-font-size', `${this.config.name_font_size}px`);
     this.style.setProperty('--level-font-size', `${this.config.level_font_size}px`);
     
@@ -261,14 +265,13 @@ class BatteryManagerCard extends HTMLElement {
         }
 
         let isStale = false;
-        let lastReportedStr = null;
+        let daysSinceReport = 0;
         if (isAvailable && state.attributes.battery_last_reported) {
-          const daysSinceReport = (new Date() - new Date(state.attributes.battery_last_reported)) / (1000 * 86400);
+          daysSinceReport = Math.floor((new Date() - new Date(state.attributes.battery_last_reported)) / (1000 * 86400));
           if (this.config.stale_days > 0 && daysSinceReport >= this.config.stale_days) {
             isStale = true;
             staleCount++;
           }
-          lastReportedStr = this.formatDate(state.attributes.battery_last_reported);
         }
 
         batteries.push({
@@ -276,7 +279,7 @@ class BatteryManagerCard extends HTMLElement {
           name: state.attributes.friendly_name.replace(' Батарея+', '').trim(),
           level, isAvailable, type: batteryType, isRechargeable, type_str: typeStr,
           last_replaced: isAvailable ? this.formatDate(state.attributes.battery_last_replaced) : null,
-          isStale, last_reported_str: lastReportedStr,
+          isStale, days_since_report: daysSinceReport,
           drain_rate: drainRate, icon: this.getBatteryIcon(level, isAvailable)
         });
 
@@ -319,7 +322,7 @@ class BatteryManagerCard extends HTMLElement {
       if (!bat.isAvailable) {
         meta += ` • ${this.localize('no_connection')}`;
       } else if (bat.isStale) {
-        meta += ` • ⏳ ${bat.last_reported_str}`;
+        meta += ` • ⏳ ${bat.days_since_report} ${this.localize('days')}`;
         levelContent = `${bat.level}%`;
       } else if (showDrain && bat.drain_rate > 0) {
         meta += ` • 🔋 ${bat.level}%`;
