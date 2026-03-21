@@ -1,3 +1,10 @@
+// Version: v1.0.8
+console.info(
+  `%c BATTERY-MANAGER-CARD %c v1.0.8 `,
+  'color: white; background: #34c759; font-weight: 700;',
+  'color: #34c759; background: white; font-weight: 700;'
+);
+
 const translations = {
   en: {
     title_default: "Battery Status",
@@ -9,6 +16,7 @@ const translations = {
     drain_rate: "Drain: ~{0}%/day",
     attention_req: "⚠️ Attention required",
     offline_count: "❔ <b>{0}</b> offline device(s)",
+    stale_count: "⏳ <b>{0}</b> device(s) not reporting",
     charge_count: "🔌 <b>{0}</b> batt. to charge",
     replace_note: "🛒 Replacements needed (see Type)",
     all_good: "✅ All devices are good",
@@ -27,6 +35,7 @@ const translations = {
     editor_charge: "🔌 Rechargeable threshold (%)",
     editor_bat: "🔋 Battery threshold (%)",
     editor_drain: "📉 Devices on 'Drain' tab",
+    editor_stale: "⏳ Days without reports (stale, 0=disable)",
     editor_name_size: "🔤 Name font size (px)",
     editor_level_size: "🔢 Level font size (px)"
   },
@@ -40,6 +49,7 @@ const translations = {
     drain_rate: "Расход: ~{0}% в день",
     attention_req: "⚠️ Требуется внимание",
     offline_count: "❔ <b>{0}</b> устройств(а) не на связи",
+    stale_count: "⏳ <b>{0}</b> устройств(а) не обновлялись",
     charge_count: "🔌 <b>{0}</b> аккум. на зарядку",
     replace_note: "🛒 Есть элементы под замену (см. Тип)",
     all_good: "✅ Все устройства в норме",
@@ -58,6 +68,7 @@ const translations = {
     editor_charge: "🔌 Порог заряда аккумуляторов (%)",
     editor_bat: "🔋 Порог заряда батареек (%)",
     editor_drain: "📉 Устройств на вкладке 'Расход'",
+    editor_stale: "⏳ Дней без обновлений (оффлайн, 0=выкл)",
     editor_name_size: "🔤 Размер шрифта для названий (px)",
     editor_level_size: "🔢 Размер шрифта для заряда (px)"
   },
@@ -71,6 +82,7 @@ const translations = {
     drain_rate: "Verbrauch: ~{0}%/Tag",
     attention_req: "⚠️ Achtung erforderlich",
     offline_count: "❔ <b>{0}</b> Gerät(e) offline",
+    stale_count: "⏳ <b>{0}</b> Gerät(e) ohne Meldung",
     charge_count: "🔌 <b>{0}</b> Akku(s) laden",
     replace_note: "🛒 Ersatz benötigt (siehe Typ)",
     all_good: "✅ Alle Geräte in Ordnung",
@@ -89,6 +101,7 @@ const translations = {
     editor_charge: "🔌 Schwellenwert Akkus (%)",
     editor_bat: "🔋 Schwellenwert Batterien (%)",
     editor_drain: "📉 Geräte im 'Verbrauch'-Tab",
+    editor_stale: "⏳ Tage ohne Meldung (offline, 0=aus)",
     editor_name_size: "🔤 Schriftgröße Name (px)",
     editor_level_size: "🔢 Schriftgröße Ladestand (px)"
   },
@@ -102,6 +115,7 @@ const translations = {
     drain_rate: "Descarga: ~{0}%/día",
     attention_req: "⚠️ Atención requerida",
     offline_count: "❔ <b>{0}</b> disp. sin conexión",
+    stale_count: "⏳ <b>{0}</b> disp. sin reportarse",
     charge_count: "🔌 <b>{0}</b> bat. a cargar",
     replace_note: "🛒 Reemplazos necesarios (ver Tipo)",
     all_good: "✅ Todos los dispositivos bien",
@@ -120,6 +134,7 @@ const translations = {
     editor_charge: "🔌 Umbral para recargables (%)",
     editor_bat: "🔋 Umbral para baterías (%)",
     editor_drain: "📉 Dispositivos en pestaña 'Descarga'",
+    editor_stale: "⏳ Días sin reportarse (offline, 0=apagado)",
     editor_name_size: "🔤 Tamaño fuente del nombre (px)",
     editor_level_size: "🔢 Tamaño fuente del nivel (px)"
   },
@@ -133,6 +148,7 @@ const translations = {
     drain_rate: "Décharge : ~{0}%/jour",
     attention_req: "⚠️ Attention requise",
     offline_count: "❔ <b>{0}</b> appareil(s) hors ligne",
+    stale_count: "⏳ <b>{0}</b> appareil(s) sans rapport",
     charge_count: "🔌 <b>{0}</b> bat. à charger",
     replace_note: "🛒 Remplacements nécessaires (voir Type)",
     all_good: "✅ Tous les appareils sont bons",
@@ -151,6 +167,7 @@ const translations = {
     editor_charge: "🔌 Seuil pour rechargeables (%)",
     editor_bat: "🔋 Seuil pour piles (%)",
     editor_drain: "📉 Appareils dans l'onglet 'Décharge'",
+    editor_stale: "⏳ Jours sans rapport (hors ligne, 0=désactivé)",
     editor_name_size: "🔤 Taille de police du nom (px)",
     editor_level_size: "🔢 Taille de police du niveau (px)"
   }
@@ -167,6 +184,7 @@ class BatteryManagerCard extends HTMLElement {
       charge_threshold: 15,
       threshold: 20,
       drain_count: 10,
+      stale_days: 5,
       name_font_size: 17,
       level_font_size: 20
     };
@@ -178,6 +196,7 @@ class BatteryManagerCard extends HTMLElement {
       charge_threshold: config.charge_threshold !== undefined ? config.charge_threshold : 15, 
       warning_threshold: config.warning_threshold !== undefined ? config.warning_threshold : 40, 
       drain_count: config.drain_count !== undefined ? config.drain_count : 10, 
+      stale_days: config.stale_days !== undefined ? config.stale_days : 5,
       name_font_size: config.name_font_size !== undefined ? config.name_font_size : 17,
       level_font_size: config.level_font_size !== undefined ? config.level_font_size : 20,
       ...config
@@ -216,13 +235,13 @@ class BatteryManagerCard extends HTMLElement {
     }
     this.header.innerText = this.config.title !== undefined && this.config.title !== "" ? this.config.title : this.localize('title_default');
     
-    // Передаем настройки шрифта в CSS через переменные
+    // Передаем настройки шрифта в CSS
     this.style.setProperty('--name-font-size', `${this.config.name_font_size}px`);
     this.style.setProperty('--level-font-size', `${this.config.level_font_size}px`);
     
     let batteries = [];
     let typesToBuy = {}; let typesToCharge = {}; let allTypesInventory = {}; 
-    let lowCount = 0; let needChargeCount = 0; let unavailableCount = 0; 
+    let lowCount = 0; let needChargeCount = 0; let unavailableCount = 0; let staleCount = 0;
 
     Object.values(hass.states).forEach(state => {
       if (state.entity_id.startsWith('sensor.') && state.attributes.device_class === 'battery' && state.attributes.battery_type !== undefined) {
@@ -241,11 +260,23 @@ class BatteryManagerCard extends HTMLElement {
           if (daysPassed > 1) drainRate = (100 - level) / daysPassed;
         }
 
+        let isStale = false;
+        let lastReportedStr = null;
+        if (isAvailable && state.attributes.battery_last_reported) {
+          const daysSinceReport = (new Date() - new Date(state.attributes.battery_last_reported)) / (1000 * 86400);
+          if (this.config.stale_days > 0 && daysSinceReport >= this.config.stale_days) {
+            isStale = true;
+            staleCount++;
+          }
+          lastReportedStr = this.formatDate(state.attributes.battery_last_reported);
+        }
+
         batteries.push({
           entity_id: state.entity_id,
           name: state.attributes.friendly_name.replace(' Батарея+', '').trim(),
           level, isAvailable, type: batteryType, isRechargeable, type_str: typeStr,
           last_replaced: isAvailable ? this.formatDate(state.attributes.battery_last_replaced) : null,
+          isStale, last_reported_str: lastReportedStr,
           drain_rate: drainRate, icon: this.getBatteryIcon(level, isAvailable)
         });
 
@@ -256,8 +287,15 @@ class BatteryManagerCard extends HTMLElement {
       }
     });
 
-    batteries.sort((a, b) => (!a.isAvailable && b.isAvailable) ? 1 : (a.isAvailable && !b.isAvailable) ? -1 : a.level - b.level);
-    this.render(batteries, typesToBuy, typesToCharge, allTypesInventory, lowCount, needChargeCount, unavailableCount);
+    batteries.sort((a, b) => {
+      const aBad = !a.isAvailable || a.isStale;
+      const bBad = !b.isAvailable || b.isStale;
+      if (aBad && !bBad) return 1;
+      if (!aBad && bBad) return -1;
+      return a.level - b.level;
+    });
+
+    this.render(batteries, typesToBuy, typesToCharge, allTypesInventory, lowCount, needChargeCount, unavailableCount, staleCount);
   }
 
   formatDate(rawDate) {
@@ -266,7 +304,7 @@ class BatteryManagerCard extends HTMLElement {
     return new Date(rawDate).toLocaleDateString(lang, { month: 'short', day: 'numeric', year: 'numeric' });
   }
 
-  render(batteries, typesToBuy, typesToCharge, allTypesInventory, lowCount, needChargeCount, unavailableCount) {
+  render(batteries, typesToBuy, typesToCharge, allTypesInventory, lowCount, needChargeCount, unavailableCount, staleCount) {
     let html = `<div class="tabs-wrapper"><div class="tabs">`;
     ['all', 'attention', 'type', 'drain'].forEach(t => {
       html += `<div class="tab ${this.activeTab === t ? 'active' : ''}" data-tab="${t}">${this.localize('tab_'+t)}${t==='all'?' ('+batteries.length+')':''}</div>`;
@@ -274,12 +312,15 @@ class BatteryManagerCard extends HTMLElement {
     html += `</div></div><div class="tab-content">`;
 
     const renderRow = (bat, showDrain = false) => {
-      let lClass = !bat.isAvailable ? 'problem' : bat.level < (bat.isRechargeable ? this.config.charge_threshold : this.config.threshold) ? 'critical' : bat.level < this.config.warning_threshold ? 'warning' : 'good';
+      let lClass = (!bat.isAvailable || bat.isStale) ? 'problem' : bat.level < (bat.isRechargeable ? this.config.charge_threshold : this.config.threshold) ? 'critical' : bat.level < this.config.warning_threshold ? 'warning' : 'good';
       let meta = bat.type_str;
       let levelContent = '—';
 
       if (!bat.isAvailable) {
         meta += ` • ${this.localize('no_connection')}`;
+      } else if (bat.isStale) {
+        meta += ` • ⏳ ${bat.last_reported_str}`;
+        levelContent = `${bat.level}%`;
       } else if (showDrain && bat.drain_rate > 0) {
         meta += ` • 🔋 ${bat.level}%`;
         levelContent = `~${bat.drain_rate.toFixed(1)}<span style="font-size: 14px; font-weight: normal; opacity: 0.8">%</span>`;
@@ -300,12 +341,14 @@ class BatteryManagerCard extends HTMLElement {
       batteries.forEach(b => html += renderRow(b));
       html += `</div>`;
     } else if (this.activeTab === 'attention') {
-      html += `<div class="rec-box ${lowCount+needChargeCount+unavailableCount>0?'warning':'ok'}"><div class="rec-title">${lowCount+needChargeCount+unavailableCount>0?this.localize('attention_req'):this.localize('all_good')}</div><div class="rec-status-list">`;
-      if (unavailableCount>0) html += `<div class="rec-stat-item">${this.localize('offline_count', unavailableCount)}</div>`;
-      if (needChargeCount>0) html += `<div class="rec-stat-item">${this.localize('charge_count', needChargeCount)}</div>`;
-      if (lowCount>0) html += `<div class="rec-stat-item">${this.localize('replace_note')}</div>`;
+      const totalProblems = lowCount + needChargeCount + unavailableCount + staleCount;
+      html += `<div class="rec-box ${totalProblems > 0 ? 'warning' : 'ok'}"><div class="rec-title">${totalProblems > 0 ? this.localize('attention_req') : this.localize('all_good')}</div><div class="rec-status-list">`;
+      if (unavailableCount > 0) html += `<div class="rec-stat-item">${this.localize('offline_count', unavailableCount)}</div>`;
+      if (staleCount > 0) html += `<div class="rec-stat-item">${this.localize('stale_count', staleCount)}</div>`;
+      if (needChargeCount > 0) html += `<div class="rec-stat-item">${this.localize('charge_count', needChargeCount)}</div>`;
+      if (lowCount > 0) html += `<div class="rec-stat-item">${this.localize('replace_note')}</div>`;
       html += `</div></div><div class="battery-list">`;
-      const att = batteries.filter(b => !b.isAvailable || b.level < (b.isRechargeable ? this.config.charge_threshold : this.config.threshold));
+      const att = batteries.filter(b => !b.isAvailable || b.isStale || b.level < (b.isRechargeable ? this.config.charge_threshold : this.config.threshold));
       att.length ? att.forEach(b => html += renderRow(b)) : html += `<div class="meta" style="text-align:center">${this.localize('no_problems')}</div>`;
       html += `</div>`;
     } else if (this.activeTab === 'type') {
@@ -317,7 +360,7 @@ class BatteryManagerCard extends HTMLElement {
       html += `<div class="inventory-section">${typeHtml}<div class="list-title" style="margin-top:20px">${this.localize('in_use')}</div><ul class="type-list minimal">${Object.entries(allTypesInventory).map(([t,q])=>`<li><span class="type-name">${t}</span> <span class="type-total">${q} ${this.localize('pcs')}</span></li>`).join('')}</ul></div>`;
     } else if (this.activeTab === 'drain') {
       html += `<div class="list-title">${this.localize('drain_speed')}</div><div class="battery-list">`;
-      const dr = batteries.filter(b => b.drain_rate > 0 && b.isAvailable).sort((a,b)=>b.drain_rate-a.drain_rate).slice(0, this.config.drain_count);
+      const dr = batteries.filter(b => b.drain_rate > 0 && b.isAvailable && !b.isStale).sort((a,b)=>b.drain_rate-a.drain_rate).slice(0, this.config.drain_count);
       dr.length ? dr.forEach(b => html += renderRow(b, true)) : html += `<div class="meta" style="text-align:center">${this.localize('no_drain_data')}</div>`;
       html += `</div>`;
     }
@@ -347,11 +390,8 @@ class BatteryManagerCard extends HTMLElement {
       .icon-wrapper.critical { background: rgba(255, 59, 48, 0.12); color: var(--apple-red); }
       .icon-wrapper.problem { background: rgba(142, 142, 147, 0.12); color: var(--apple-grey); }
       .name-col { min-width: 0; display: flex; flex-direction: column; justify-content: center; }
-      
-      /* Используем CSS-переменные для шрифтов */
       .name { font-weight: 600; font-size: var(--name-font-size, 17px); white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
       .level { font-weight: 700; font-size: var(--level-font-size, 20px); }
-      
       .meta { font-size: 13px; color: var(--secondary-text-color); white-space: nowrap; overflow: hidden; text-overflow: ellipsis; margin-top: 2px; }
       .level-col { text-align: right; white-space: nowrap; }
       .level.good { color: var(--apple-green); }
@@ -388,7 +428,6 @@ class BatteryManagerCardEditor extends HTMLElement {
     this.renderForm();
   }
 
-  // Функция локализации для редактора
   localize(key) {
     const lang = (this._hass && this._hass.language) ? this._hass.language.substring(0, 2) : 'en';
     let translated = translations[lang] ? translations[lang][key] : translations['en'][key];
@@ -413,6 +452,10 @@ class BatteryManagerCardEditor extends HTMLElement {
         <div class="option">
           <label for="threshold">${this.localize('editor_bat')}</label>
           <input type="number" id="threshold" value="${this._config.threshold !== undefined ? this._config.threshold : 20}">
+        </div>
+        <div class="option">
+          <label for="stale_days">${this.localize('editor_stale')}</label>
+          <input type="number" id="stale_days" value="${this._config.stale_days !== undefined ? this._config.stale_days : 5}">
         </div>
         <div class="option">
           <label for="drain_count">${this.localize('editor_drain')}</label>
