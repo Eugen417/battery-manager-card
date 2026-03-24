@@ -1,6 +1,6 @@
-// Version: v1.0.9
+// Version: v1.0.11
 console.info(
-  `%c BATTERY-MANAGER-CARD %c v1.0.9 `,
+  `%c BATTERY-MANAGER-CARD %c v1.0.11 `,
   'color: white; background: #34c759; font-weight: 700;',
   'color: #34c759; background: white; font-weight: 700;'
 );
@@ -233,9 +233,11 @@ class BatteryManagerCard extends HTMLElement {
   set hass(hass) {
     this._hass = hass;
     if (!this.content) {
-      this.innerHTML = `<ha-card><div class="card-header"></div><div class="card-content" id="content"></div></ha-card>`;
-      this.content = this.querySelector('#content');
-      this.header = this.querySelector('.card-header');
+      // ЗАЩИТА: Включаем Shadow DOM
+      this.attachShadow({ mode: 'open' });
+      this.shadowRoot.innerHTML = `<ha-card><div class="card-header"></div><div class="card-content" id="content"></div></ha-card>`;
+      this.content = this.shadowRoot.querySelector('#content');
+      this.header = this.shadowRoot.querySelector('.card-header');
       this.addStyles();
     }
     this.header.innerText = this.config.title !== undefined && this.config.title !== "" ? this.config.title : this.localize('title_default');
@@ -369,8 +371,9 @@ class BatteryManagerCard extends HTMLElement {
     }
 
     this.content.innerHTML = html + `</div>`;
-    this.querySelectorAll('.tab').forEach(t => t.addEventListener('click', e => { this.activeTab = e.target.dataset.tab; this.hass = this._hass; }));
-    this.querySelectorAll('.battery-row').forEach(r => r.addEventListener('click', () => { if (!r.classList.contains('problem')) { const ev = new Event('hass-more-info', { bubbles: true, composed: true }); ev.detail = { entityId: r.dataset.entity }; this.dispatchEvent(ev); } }));
+    // Используем shadowRoot для поиска
+    this.shadowRoot.querySelectorAll('.tab').forEach(t => t.addEventListener('click', e => { this.activeTab = e.target.dataset.tab; this.hass = this._hass; }));
+    this.shadowRoot.querySelectorAll('.battery-row').forEach(r => r.addEventListener('click', () => { if (!r.classList.contains('problem')) { const ev = new Event('hass-more-info', { bubbles: true, composed: true }); ev.detail = { entityId: r.dataset.entity }; this.dispatchEvent(ev); } }));
   }
 
   addStyles() {
@@ -385,21 +388,26 @@ class BatteryManagerCard extends HTMLElement {
       .tab.active { background: var(--card-background-color); box-shadow: 0 3px 8px rgba(0,0,0,0.1); }
       .tab-content { padding: 0 16px; }
       .battery-list { display: flex; flex-direction: column; gap: 2px; }
-      .battery-row { display: grid; grid-template-columns: 40px 1fr auto; align-items: center; gap: 16px; padding: 12px 16px; border-radius: 12px; margin: 0 -8px; cursor: pointer; }
+      
+      .battery-row { display: flex; flex-direction: row; align-items: center; gap: 16px; padding: 12px 16px; border-radius: 12px; margin: 0 -8px; cursor: pointer; }
       .battery-row:hover { background: var(--secondary-background-color); }
-      .icon-wrapper { width: 40px; height: 40px; border-radius: 10px; display: flex; align-items: center; justify-content: center; }
+      
+      .icon-wrapper { flex: 0 0 auto; width: 40px; height: 40px; border-radius: 10px; display: flex; align-items: center; justify-content: center; }
       .icon-wrapper.good { background: rgba(52, 199, 89, 0.12); color: var(--apple-green); }
       .icon-wrapper.warning { background: rgba(255, 149, 0, 0.12); color: var(--apple-orange); }
       .icon-wrapper.critical { background: rgba(255, 59, 48, 0.12); color: var(--apple-red); }
       .icon-wrapper.problem { background: rgba(142, 142, 147, 0.12); color: var(--apple-grey); }
-      .name-col { min-width: 0; display: flex; flex-direction: column; justify-content: center; }
-      .name { font-weight: 600; font-size: var(--name-font-size, 17px); white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
-      .level { font-weight: 700; font-size: var(--level-font-size, 20px); }
+      
+      .name-col { flex: 1 1 auto; min-width: 0; display: flex; flex-direction: column; justify-content: center; }
+      .name { font-weight: 600; font-size: var(--name-font-size, 17px); white-space: nowrap; overflow: hidden; text-overflow: ellipsis; color: var(--primary-text-color); }
       .meta { font-size: 13px; color: var(--secondary-text-color); white-space: nowrap; overflow: hidden; text-overflow: ellipsis; margin-top: 2px; }
-      .level-col { text-align: right; white-space: nowrap; }
+      
+      .level-col { flex: 0 0 auto; text-align: right; white-space: nowrap; }
+      .level { font-weight: 700; font-size: var(--level-font-size, 20px); }
       .level.good { color: var(--apple-green); }
       .level.warning { color: var(--apple-orange); }
       .level.critical { color: var(--apple-red); }
+      
       .rec-box { border-radius: 12px; padding: 16px; margin-bottom: 20px; }
       .rec-box.warning { background: rgba(255, 149, 0, 0.08); }
       .rec-box.ok { background: rgba(52, 199, 89, 0.08); color: var(--apple-green); text-align: center; }
@@ -413,7 +421,8 @@ class BatteryManagerCard extends HTMLElement {
       .charge-badge { background: var(--apple-red); }
       .list-title { font-weight: 700; font-size: 18px; margin-bottom: 12px; }
     `;
-    this.appendChild(s);
+    // Добавляем стили в shadowRoot
+    this.shadowRoot.appendChild(s);
   }
 }
 
