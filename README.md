@@ -3,19 +3,19 @@
 [![hacs_badge](https://img.shields.io/badge/HACS-Custom-41BDF5.svg?style=for-the-badge)](https://github.com/hacs/integration)
 [![GitHub Release](https://img.shields.io/github/v/release/Eugen417/battery-manager-card?style=for-the-badge)](https://github.com/Eugen417/battery-manager-card/releases)
 
-
 [🇷🇺 Русский](#-русский) | [🇬🇧 English](#-english) | [🇩🇪 Deutsch](#-deutsch) | [🇪🇸 Español](#-español) | [🇫🇷 Français](#-français)
 
 ---
 
 ## 🇷🇺 Русский
 
-Современная и интерактивная карточка для Home Assistant, работающая в связке с интеграцией **HA-Battery-Notes**. Дизайн выполнен в минималистичном стиле (Apple-style) с использованием CSS Grid.
+Современная и интерактивная карточка для Home Assistant, работающая в связке с интеграцией **HA-Battery-Notes**. Дизайн выполнен в минималистичном стиле (Apple-style) с надежной Flexbox-версткой и защитой от чужих стилей (Shadow DOM).
 
 ### ✨ Возможности
-* 🖥️ **Визуальный редактор (UI)**: Никакого YAML! Все параметры настраиваются прямо в интерфейсе.
+* 🖥️ **Визуальный редактор (UI)**: Никакого YAML! Просто добавьте карточку и настройте все параметры в удобном интерфейсе.
 * 🔍 **Автоматический поиск**: Сама находит все устройства с классом `battery`.
 * 📑 **Вкладки**: ОБЗОР (все), ВНИМАНИЕ (проблемные), ТИП (инвентарь), РАСХОД (аналитика).
+* ⏳ **Поиск зависших датчиков**: Отслеживание устройств, которые отвалились от сети и давно не присылали данные.
 * 📉 **Умная аналитика**: Расход заряда (% в день) на основе даты последней замены.
 * 🔠 **Кастомизация**: Возможность изменить размер шрифтов под ваш дашборд.
 * 📦 **Инвентарь**: Общее количество батареек в доме по типам.
@@ -29,31 +29,19 @@
 
 **Вариант 2: Вручную**
 1. Скопируйте файл `battery-manager-card.js` в `/config/www/battery_manager_card/`.
-2. Добавьте ресурс в настройках: **Настройки -> Панели управления -> Ресурсы**: `/local/battery_manager_card/battery-manager-card.js?v=1.0.7` (Модуль JavaScript).
-
-### ⚙️ Настройка
-Просто добавьте карточку на дашборд и настройте её через **визуальный интерфейс**. 
-Для любителей YAML доступна ручная конфигурация:
-```yaml
-type: custom:battery-manager-card
-title: Элементы питания
-charge_threshold: 15 # Порог заряда для аккумуляторов (%)
-threshold: 20        # Порог критического заряда для обычных батареек (%)
-drain_count: 10      # Количество устройств на вкладке "РАСХОД"
-name_font_size: 17   # Размер шрифта для названий (px)
-level_font_size: 20  # Размер шрифта для заряда (px)
-```
+2. Добавьте ресурс в настройках: **Настройки -> Панели управления -> Ресурсы**: `/local/battery_manager_card/battery-manager-card.js?v=1.0.11` (Модуль JavaScript).
 
 ---
 
 ## 🇬🇧 English
 
-Modern and interactive custom card for Home Assistant, designed for **HA-Battery-Notes**. Features a minimalist Apple-style design using CSS Grid.
+Modern and interactive custom card for Home Assistant, designed for **HA-Battery-Notes**. Features a minimalist Apple-style design using robust Flexbox and Shadow DOM isolation.
 
 ### ✨ Features
-* 🖥️ **Full Visual Editor (UI)**: No YAML required! Configure everything directly in the interface.
+* 🖥️ **Full Visual Editor (UI)**: No YAML required! Simply add the card and configure everything directly in the UI.
 * 🔍 **Auto-discovery**: Automatically finds all devices with the `battery` class.
 * 📑 **Tabs**: OVERVIEW (all), ATTENTION (issues), TYPE (inventory), DRAIN (analytics).
+* ⏳ **Stale Device Tracking**: Detects devices that have gone offline and haven't reported data in a while.
 * 📉 **Smart Analytics**: Battery drain rate (% per day) based on replacement date.
 * 🔠 **Customizable Fonts**: Change font sizes to fit your dashboard perfectly.
 * 📦 **Inventory Tracking**: Total count of all batteries in your home by type.
@@ -67,31 +55,19 @@ Modern and interactive custom card for Home Assistant, designed for **HA-Battery
 
 **Option 2: Manual**
 1. Copy the `battery-manager-card.js` file to `/config/www/battery_manager_card/`.
-2. Add the resource in Settings -> Dashboards -> Resources: `/local/battery_manager_card/battery-manager-card.js?v=1.0.7` (JavaScript Module).
-
-### ⚙️ Configuration
-Simply add the card to your dashboard and use the **Visual Editor**.
-For advanced YAML users:
-```yaml
-type: custom:battery-manager-card
-title: Battery Status
-charge_threshold: 15 # Critical charge level for rechargeable batteries (%)
-threshold: 20        # Critical charge level for standard batteries (%)
-drain_count: 10      # Number of devices in the "DRAIN" tab
-name_font_size: 17   # Font size for device names (px)
-level_font_size: 20  # Font size for battery levels (px)
-```
+2. Add the resource in Settings -> Dashboards -> Resources: `/local/battery_manager_card/battery-manager-card.js?v=1.0.11` (JavaScript Module).
 
 ---
 
 ## 🇩🇪 Deutsch
 
-Moderne, interaktive benutzerdefinierte Karte für Home Assistant, optimiert für **HA-Battery-Notes**. Minimalistisches Apple-Style Design mit CSS Grid.
+Moderne, interaktive benutzerdefinierte Karte für Home Assistant, optimiert für **HA-Battery-Notes**. Minimalistisches Apple-Style Design mit robustem Flexbox und Shadow DOM-Isolierung.
 
 ### ✨ Funktionen
-* 🖥️ **Visueller Editor (UI)**: Kein YAML nötig! Alles direkt im Interface konfigurieren.
+* 🖥️ **Visueller Editor (UI)**: Kein YAML nötig! Alles direkt über die Benutzeroberfläche konfigurieren.
 * 🔍 **Auto-Discovery**: Findet automatisch alle Geräte mit der Klasse `battery`.
 * 📑 **Tabs**: ÜBERSICHT (alle), ACHTUNG (Probleme), TYP (Bestand), VERBRAUCH (Analyse).
+* ⏳ **Erkennung inaktiver Geräte**: Findet Geräte, die offline sind und sich lange nicht gemeldet haben.
 * 📉 **Intelligente Analyse**: Berechnet den täglichen Verbrauch (% pro Tag).
 * 🔠 **Anpassbare Schriftarten**: Ändern Sie die Schriftgrößen für Ihr Dashboard.
 * 📦 **Bestandsaufnahme**: Gesamtanzahl aller Batterietypen in Ihrem Zuhause.
@@ -105,29 +81,19 @@ Moderne, interaktive benutzerdefinierte Karte für Home Assistant, optimiert fü
 
 **Option 2: Manuell**
 1. Kopieren Sie `battery-manager-card.js` nach `/config/www/battery_manager_card/`.
-2. Ressource hinzufügen unter Einstellungen -> Dashboards -> Ressourcen: `/local/battery_manager_card/battery-manager-card.js?v=1.0.7` (JavaScript Modul).
-
-### ⚙️ Konfiguration
-Nutzen Sie den **Visuellen Editor** im Dashboard. Für YAML:
-```yaml
-type: custom:battery-manager-card
-charge_threshold: 15 
-threshold: 20        
-drain_count: 10      
-name_font_size: 17   
-level_font_size: 20  
-```
+2. Ressource hinzufügen unter Einstellungen -> Dashboards -> Ressourcen: `/local/battery_manager_card/battery-manager-card.js?v=1.0.11` (JavaScript Modul).
 
 ---
 
 ## 🇪🇸 Español
 
-Tarjeta interactiva moderna para Home Assistant, diseñada para **HA-Battery-Notes**. Diseño minimalista tipo Apple usando CSS Grid.
+Tarjeta interactiva moderna para Home Assistant, diseñada para **HA-Battery-Notes**. Diseño minimalista tipo Apple usando Flexbox robusto y aislamiento Shadow DOM.
 
 ### ✨ Características
-* 🖥️ **Editor Visual (UI)**: ¡Sin necesidad de YAML!
+* 🖥️ **Editor Visual (UI)**: ¡Sin necesidad de YAML! Configure todo directamente en la interfaz.
 * 🔍 **Auto-descubrimiento**: Encuentra dispositivos con la clase `battery`.
 * 📑 **Pestañas**: RESUMEN (todos), ATENCIÓN (problemas), TIPO (inventario), DESCARGA (análisis).
+* ⏳ **Dispositivos inactivos**: Detecta dispositivos que se han desconectado y no han enviado datos en mucho tiempo.
 * 📉 **Análisis inteligente**: Consumo diario (% por día).
 * 🔠 **Fuentes personalizables**: Cambie el tamaño de fuente para nombres y porcentajes.
 * 📦 **Inventario**: Recuento total de baterías por tipo.
@@ -139,27 +105,21 @@ Tarjeta interactiva moderna para Home Assistant, diseñada para **HA-Battery-Not
 3. Instalar.
 4. ⚠️ **IMPORTANTE:** ¡Limpie la caché de su navegador (Ctrl+F5)!
 
-### ⚙️ Configuración
-Use el **Editor Visual**. Ejemplo YAML:
-```yaml
-type: custom:battery-manager-card
-charge_threshold: 15 
-threshold: 20        
-drain_count: 10      
-name_font_size: 17   
-level_font_size: 20  
-```
+**Opción 2: Manual**
+1. Copie `battery-manager-card.js` a `/config/www/battery_manager_card/`.
+2. Añada el recurso en Ajustes -> Paneles -> Recursos: `/local/battery_manager_card/battery-manager-card.js?v=1.0.11` (Módulo JavaScript).
 
 ---
 
 ## 🇫🇷 Français
 
-Carte interactive moderne pour Home Assistant, conçue pour **HA-Battery-Notes**. Design minimaliste style Apple avec CSS Grid.
+Carte interactive moderne pour Home Assistant, conçue pour **HA-Battery-Notes**. Design minimaliste style Apple avec Flexbox robuste et isolation Shadow DOM.
 
 ### ✨ Fonctionnalités
-* 🖥️ **Éditeur Visuel (UI)**: Pas de YAML requis !
+* 🖥️ **Éditeur Visuel (UI)**: Pas de YAML requis ! Configurez tout directement dans l'interface.
 * 🔍 **Détection automatique**: Trouve les appareils avec la classe `battery`.
 * 📑 **Onglets**: APERÇU (tous), ATTENTION (problèmes), TYPE (inventaire), DÉCHARGE (analyse).
+* ⏳ **Appareils inactifs**: Détecte les appareils hors ligne qui n'ont pas envoyé de données depuis longtemps.
 * 📉 **Analyse intelligente**: Taux de décharge (% par jour).
 * 🔠 **Polices personnalisables**: Modifiez la taille du texte.
 * 📦 **Inventaire**: Nombre total de piles par type.
@@ -171,13 +131,6 @@ Carte interactive moderne pour Home Assistant, conçue pour **HA-Battery-Notes**
 3. Installer.
 4. ⚠️ **IMPORTANT:** Videz le cache de votre navigateur (Ctrl+F5) !
 
-### ⚙️ Configuration
-Utilisez l'**Éditeur Visuel**. Exemple YAML:
-```yaml
-type: custom:battery-manager-card
-charge_threshold: 15 
-threshold: 20        
-drain_count: 10      
-name_font_size: 17   
-level_font_size: 20  
-```
+**Option 2: Manuel**
+1. Copiez `battery-manager-card.js` dans `/config/www/battery_manager_card/`.
+2. Ajoutez la ressource dans Paramètres -> Tableaux de bord -> Ressources: `/local/battery_manager_card/battery-manager-card.js?v=1.0.11` (Module JavaScript).
