@@ -9,22 +9,20 @@
 
 <table>
   <tr>
-    <td width="50%" align="center" valign="top">
+    <td width="25%" align="center" valign="top">
       <b>ОБЗОР и Настройки</b><br>
       <img src="https://github.com/user-attachments/assets/71eba7de-4deb-4ac9-ac8d-37f987d50572" width="100%">
     </td>
-    <td width="50%" align="center" valign="top">
-      <b>Вкладка «РАСХОД» (Аналитика)</b><br>
+    <td width="25%" align="center" valign="top">
+      <b>Вкладка «РАСХОД»</b><br>
       <img src="https://github.com/user-attachments/assets/8ed35463-60ef-4df3-b304-6b4f504b4927" width="100%">
     </td>
-  </tr>
-  <tr>
-    <td width="50%" align="center" valign="top">
-      <b>Вкладка «ТИП» (Инвентарь)</b><br>
+    <td width="25%" align="center" valign="top">
+      <b>Вкладка «ТИП»</b><br>
       <img src="https://github.com/user-attachments/assets/6cab7036-9657-4215-9590-68fc26198a73" width="100%">
     </td>
-    <td width="50%" align="center" valign="top">
-      <b>Вкладка «ВНИМАНИЕ» (Проблемы)</b><br>
+    <td width="25%" align="center" valign="top">
+      <b>Вкладка «ВНИМАНИЕ»</b><br>
       <img src="https://github.com/user-attachments/assets/2996abfd-160b-4f76-bea5-dd14f1d8debc" width="100%">
     </td>
   </tr>
