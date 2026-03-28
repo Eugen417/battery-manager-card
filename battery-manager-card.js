@@ -1,6 +1,6 @@
-// Version: v1.0.8
+// Version: v1.0.9
 console.info(
-  `%c BATTERY-MANAGER-CARD %c v1.0.8 `,
+  `%c BATTERY-MANAGER-CARD %c v1.0.9 `,
   'color: white; background: #34c759; font-weight: 700;',
   'color: #34c759; background: white; font-weight: 700;'
 );
@@ -207,6 +207,7 @@ class BatteryManagerCard extends HTMLElement {
       ...config
     };
     if (!this.activeTab) this.activeTab = 'all';
+    this._lastStateHash = null; // Сбрасываем кэш при смене конфига
   }
 
   static get cardSize() {
@@ -233,7 +234,6 @@ class BatteryManagerCard extends HTMLElement {
   set hass(hass) {
     this._hass = hass;
     if (!this.content) {
-      // ЗАЩИТА: Включаем Shadow DOM
       this.attachShadow({ mode: 'open' });
       this.shadowRoot.innerHTML = `<ha-card><div class="card-header"></div><div class="card-content" id="content"></div></ha-card>`;
       this.content = this.shadowRoot.querySelector('#content');
@@ -299,6 +299,11 @@ class BatteryManagerCard extends HTMLElement {
       if (!aBad && bBad) return -1;
       return a.level - b.level;
     });
+
+    // ОПТИМИЗАЦИЯ: Проверяем, изменились ли данные перед перерисовкой
+    const stateHash = batteries.map(b => `${b.entity_id}:${b.level}:${b.isAvailable}:${b.isStale}`).join('|') + `|${this.activeTab}`;
+    if (this._lastStateHash === stateHash) return;
+    this._lastStateHash = stateHash;
 
     this.render(batteries, typesToBuy, typesToCharge, allTypesInventory, lowCount, needChargeCount, unavailableCount, staleCount);
   }
@@ -371,8 +376,14 @@ class BatteryManagerCard extends HTMLElement {
     }
 
     this.content.innerHTML = html + `</div>`;
-    // Используем shadowRoot для поиска
-    this.shadowRoot.querySelectorAll('.tab').forEach(t => t.addEventListener('click', e => { this.activeTab = e.target.dataset.tab; this.hass = this._hass; }));
+    
+    this.shadowRoot.querySelectorAll('.tab').forEach(t => t.addEventListener('click', () => { 
+      if (this.activeTab !== t.dataset.tab) {
+        this.activeTab = t.dataset.tab; 
+        this._lastStateHash = null; // Принудительно сбрасываем кэш, чтобы вкладка отрисовалась
+        this.hass = this._hass; 
+      }
+    }));
     this.shadowRoot.querySelectorAll('.battery-row').forEach(r => r.addEventListener('click', () => { if (!r.classList.contains('problem')) { const ev = new Event('hass-more-info', { bubbles: true, composed: true }); ev.detail = { entityId: r.dataset.entity }; this.dispatchEvent(ev); } }));
   }
 
@@ -421,7 +432,6 @@ class BatteryManagerCard extends HTMLElement {
       .charge-badge { background: var(--apple-red); }
       .list-title { font-weight: 700; font-size: 18px; margin-bottom: 12px; }
     `;
-    // Добавляем стили в shadowRoot
     this.shadowRoot.appendChild(s);
   }
 }
