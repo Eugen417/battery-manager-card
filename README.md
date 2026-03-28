@@ -34,7 +34,7 @@
 
 ## 🇷🇺 Русский
 
-Современная и интерактивная карточка для Home Assistant, работающая в связке с интеграцией **HA-Battery-Notes**. Дизайн выполнен в минималистичном стиле (Apple-style) с надежной Flexbox-версткой и защитой от чужих стилей (Shadow DOM).
+Современная и интерактивная карточка для Home Assistant, работающая в связке с интеграцией **[HA-Battery-Notes](https://github.com/andrew-codechimp/HA-Battery-Notes)**. Дизайн выполнен в минималистичном стиле с надежной Flexbox-версткой и защитой от чужих стилей (Shadow DOM).
 
 ### ✨ Возможности
 * 🖥️ **Визуальный редактор (UI)**: Никакого YAML! Просто добавьте карточку и настройте все параметры в удобном интерфейсе.
@@ -60,7 +60,7 @@
 
 ## 🇬🇧 English
 
-Modern and interactive custom card for Home Assistant, designed for **HA-Battery-Notes**. Features a minimalist Apple-style design using robust Flexbox and Shadow DOM isolation.
+Modern and interactive custom card for Home Assistant, designed for **[HA-Battery-Notes](https://github.com/andrew-codechimp/HA-Battery-Notes)**. Features a minimalist design using robust Flexbox and Shadow DOM isolation.
 
 ### ✨ Features
 * 🖥️ **Full Visual Editor (UI)**: No YAML required! Simply add the card and configure everything directly in the UI.
@@ -86,7 +86,7 @@ Modern and interactive custom card for Home Assistant, designed for **HA-Battery
 
 ## 🇩🇪 Deutsch
 
-Moderne, interaktive benutzerdefinierte Karte für Home Assistant, optimiert für **HA-Battery-Notes**. Minimalistisches Apple-Style Design mit robustem Flexbox und Shadow DOM-Isolierung.
+Moderne, interaktive benutzerdefinierte Karte für Home Assistant, optimiert für **[HA-Battery-Notes](https://github.com/andrew-codechimp/HA-Battery-Notes)**. Minimalistisches Design mit robustem Flexbox und Shadow DOM-Isolierung.
 
 ### ✨ Funktionen
 * 🖥️ **Visueller Editor (UI)**: Kein YAML nötig! Alles direkt über die Benutzeroberfläche konfigurieren.
@@ -112,7 +112,7 @@ Moderne, interaktive benutzerdefinierte Karte für Home Assistant, optimiert fü
 
 ## 🇪🇸 Español
 
-Tarjeta interactiva moderna para Home Assistant, diseñada para **HA-Battery-Notes**. Diseño minimalista tipo Apple usando Flexbox robusto y aislamiento Shadow DOM.
+Tarjeta interactiva moderna para Home Assistant, diseñada para **[HA-Battery-Notes](https://github.com/andrew-codechimp/HA-Battery-Notes)**. Diseño minimalista usando Flexbox robusto y aislamiento Shadow DOM.
 
 ### ✨ Características
 * 🖥️ **Editor Visual (UI)**: ¡Sin necesidad de YAML! Configure todo directamente en la interfaz.
@@ -138,7 +138,7 @@ Tarjeta interactiva moderna para Home Assistant, diseñada para **HA-Battery-Not
 
 ## 🇫🇷 Français
 
-Carte interactive moderne pour Home Assistant, conçue pour **HA-Battery-Notes**. Design minimaliste style Apple avec Flexbox robuste et isolation Shadow DOM.
+Carte interactive moderne pour Home Assistant, conçue pour **[HA-Battery-Notes](https://github.com/andrew-codechimp/HA-Battery-Notes)**. Design minimaliste avec Flexbox robuste et isolation Shadow DOM.
 
 ### ✨ Fonctionnalités
 * 🖥️ **Éditeur Visuel (UI)**: Pas de YAML requis ! Configurez tout directement dans l'interface.
@@ -156,6 +156,6 @@ Carte interactive moderne pour Home Assistant, conçue pour **HA-Battery-Notes**
 3. Installer.
 4. ⚠️ **IMPORTANT:** Videz le cache de votre navigateur (Ctrl+F5) !
 
-**Option 2: Manuel**
+**Option 2: Manual**
 1. Copiez `battery-manager-card.js` dans `/config/www/battery_manager_card/`.
-2. Ajoutez la ressource dans Paramètres -> Tableaux de bord -> Ressources: `/local/battery_manager_card/battery-manager-card.js?v=1.0.11` (Module JavaScript).
+2. Ajoutez la ressource dans Paramètres -> Tableaux de bord -> Ressources: `/local/battery_manager_card/battery-manager-card.js?v=1.0.11` (Module JavaScript).> Ressources: `/local/battery_manager_card/battery-manager-card.js?v=1.0.11` (Module JavaScript).
