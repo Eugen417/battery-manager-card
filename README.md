@@ -50,6 +50,8 @@
 3. Установите карточку.
 4. ⚠️ **ВАЖНО:** Очистите кэш браузера (Ctrl+F5) или кэш фронтенда в мобильном приложении!
 
+[![Open your Home Assistant instance and open a repository inside the Home Assistant Community Store.](https://my.home-assistant.io/badges/hacs_repository.svg)](https://my.home-assistant.io/redirect/hacs_repository/?owner=Eugen417&repository=battery-manager-card&category=plugin)
+
 **Вариант 2: Вручную**
 1. Скопируйте файл `battery-manager-card.js` в `/config/www/battery_manager_card/`.
 2. Добавьте ресурс в настройках: **Настройки -> Панели управления -> Ресурсы**: `/local/battery_manager_card/battery-manager-card.js?v=1.0.11` (Модуль JavaScript).
@@ -75,6 +77,8 @@ Modern and interactive custom card for Home Assistant, designed for **[HA-Batter
 2. URL: `https://github.com/Eugen417/battery-manager-card`, Category: **Lovelace** (Dashboard).
 3. Install the card.
 4. ⚠️ **IMPORTANT:** Clear your browser cache (Ctrl+F5) or frontend cache in the companion app!
+
+[![Open your Home Assistant instance and open a repository inside the Home Assistant Community Store.](https://my.home-assistant.io/badges/hacs_repository.svg)](https://my.home-assistant.io/redirect/hacs_repository/?owner=Eugen417&repository=battery-manager-card&category=plugin)
 
 **Option 2: Manual**
 1. Copy the `battery-manager-card.js` file to `/config/www/battery_manager_card/`.
@@ -102,6 +106,8 @@ Moderne, interaktive benutzerdefinierte Karte für Home Assistant, optimiert fü
 3. Installieren.
 4. ⚠️ **WICHTIG:** Leeren Sie Ihren Browser-Cache (Strg+F5)!
 
+[![Open your Home Assistant instance and open a repository inside the Home Assistant Community Store.](https://my.home-assistant.io/badges/hacs_repository.svg)](https://my.home-assistant.io/redirect/hacs_repository/?owner=Eugen417&repository=battery-manager-card&category=plugin)
+
 **Option 2: Manuell**
 1. Kopieren Sie `battery-manager-card.js` nach `/config/www/battery_manager_card/`.
 2. Ressource hinzufügen unter Einstellungen -> Dashboards -> Ressourcen: `/local/battery_manager_card/battery-manager-card.js?v=1.0.11` (JavaScript Modul).
@@ -128,6 +134,8 @@ Tarjeta interactiva moderna para Home Assistant, diseñada para **[HA-Battery-No
 3. Instalar.
 4. ⚠️ **IMPORTANTE:** ¡Limpie la caché de su navegador (Ctrl+F5)!
 
+[![Open your Home Assistant instance and open a repository inside the Home Assistant Community Store.](https://my.home-assistant.io/badges/hacs_repository.svg)](https://my.home-assistant.io/redirect/hacs_repository/?owner=Eugen417&repository=battery-manager-card&category=plugin)
+
 **Opción 2: Manual**
 1. Copie `battery-manager-card.js` a `/config/www/battery_manager_card/`.
 2. Añada el recurso en Ajustes -> Paneles -> Recursos: `/local/battery_manager_card/battery-manager-card.js?v=1.0.11` (Módulo JavaScript).
@@ -153,6 +161,8 @@ Carte interactive moderne pour Home Assistant, conçue pour **[HA-Battery-Notes]
 2. URL: `https://github.com/Eugen417/battery-manager-card`, Catégorie: **Lovelace** (Tableau de bord).
 3. Installer.
 4. ⚠️ **IMPORTANT:** Videz le cache de votre navigateur (Ctrl+F5) !
+
+[![Open your Home Assistant instance and open a repository inside the Home Assistant Community Store.](https://my.home-assistant.io/badges/hacs_repository.svg)](https://my.home-assistant.io/redirect/hacs_repository/?owner=Eugen417&repository=battery-manager-card&category=plugin)
 
 **Option 2: Manual**
 1. Copiez `battery-manager-card.js` dans `/config/www/battery_manager_card/`.
