@@ -1,6 +1,6 @@
-// Version: v1.0.10
+// Version: v1.1.0
 console.info(
-  `%c BATTERY-MANAGER-CARD %c v1.0.10 `,
+  `%c BATTERY-MANAGER-CARD %c v1.1.0`,
   'color: white; background: #34c759; font-weight: 700;',
   'color: #34c759; background: white; font-weight: 700;'
 );
