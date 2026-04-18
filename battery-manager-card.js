@@ -1,6 +1,6 @@
-// Version: v1.0.9
+// Version: v1.0.10
 console.info(
-  `%c BATTERY-MANAGER-CARD %c v1.0.9 `,
+  `%c BATTERY-MANAGER-CARD %c v1.0.10 `,
   'color: white; background: #34c759; font-weight: 700;',
   'color: #34c759; background: white; font-weight: 700;'
 );
@@ -38,7 +38,13 @@ const translations = {
     editor_drain: "📉 Devices on 'Drain' tab",
     editor_stale: "⏳ Days without reports (stale, 0=disable)",
     editor_name_size: "🔤 Name font size (px)",
-    editor_level_size: "🔢 Level font size (px)"
+    editor_level_size: "🔢 Level font size (px)",
+    editor_default_tab: "Default tab",
+    editor_tab_all: "Overview",
+    editor_tab_attention: "Attention",
+    editor_tab_type: "Type",
+    editor_tab_drain: "Drain",
+    editor_hide_good: "Hide card if all devices are good"
   },
   ru: {
     title_default: "Элементы питания",
@@ -72,7 +78,13 @@ const translations = {
     editor_drain: "📉 Устройств на вкладке 'Расход'",
     editor_stale: "⏳ Дней без обновлений (оффлайн, 0=выкл)",
     editor_name_size: "🔤 Размер шрифта для названий (px)",
-    editor_level_size: "🔢 Размер шрифта для заряда (px)"
+    editor_level_size: "🔢 Размер шрифта для заряда (px)",
+    editor_default_tab: "Вкладка по умолчанию",
+    editor_tab_all: "Обзор",
+    editor_tab_attention: "Внимание",
+    editor_tab_type: "Тип",
+    editor_tab_drain: "Расход",
+    editor_hide_good: "Скрыть карточку, если всё в норме"
   },
   de: {
     title_default: "Batteriestatus",
@@ -106,7 +118,13 @@ const translations = {
     editor_drain: "📉 Geräte im 'Verbrauch'-Tab",
     editor_stale: "⏳ Tage ohne Meldung (offline, 0=aus)",
     editor_name_size: "🔤 Schriftgröße Name (px)",
-    editor_level_size: "🔢 Schriftgröße Ladestand (px)"
+    editor_level_size: "🔢 Schriftgröße Ladestand (px)",
+    editor_default_tab: "Standard-Tab",
+    editor_tab_all: "Übersicht",
+    editor_tab_attention: "Achtung",
+    editor_tab_type: "Typ",
+    editor_tab_drain: "Verbrauch",
+    editor_hide_good: "Karte ausblenden, wenn alles in Ordnung ist"
   },
   es: {
     title_default: "Estado de Baterías",
@@ -140,7 +158,13 @@ const translations = {
     editor_drain: "📉 Dispositivos en pestaña 'Descarga'",
     editor_stale: "⏳ Días sin reportarse (offline, 0=apagado)",
     editor_name_size: "🔤 Tamaño fuente del nombre (px)",
-    editor_level_size: "🔢 Tamaño fuente del nivel (px)"
+    editor_level_size: "🔢 Tamaño fuente del nivel (px)",
+    editor_default_tab: "Pestaña predeterminada",
+    editor_tab_all: "Resumen",
+    editor_tab_attention: "Atención",
+    editor_tab_type: "Tipo",
+    editor_tab_drain: "Descarga",
+    editor_hide_good: "Ocultar tarjeta si todo está bien"
   },
   fr: {
     title_default: "État des Batteries",
@@ -174,7 +198,13 @@ const translations = {
     editor_drain: "📉 Appareils dans l'onglet 'Décharge'",
     editor_stale: "⏳ Jours sans rapport (hors ligne, 0=désactivé)",
     editor_name_size: "🔤 Taille de police du nom (px)",
-    editor_level_size: "🔢 Taille de police du niveau (px)"
+    editor_level_size: "🔢 Taille de police du niveau (px)",
+    editor_default_tab: "Onglet par défaut",
+    editor_tab_all: "Aperçu",
+    editor_tab_attention: "Attention",
+    editor_tab_type: "Type",
+    editor_tab_drain: "Décharge",
+    editor_hide_good: "Masquer la carte si tout va bien"
   }
 };
 
@@ -186,6 +216,8 @@ class BatteryManagerCard extends HTMLElement {
   static getStubConfig() {
     return {
       type: "custom:battery-manager-card",
+      default_tab: "all",
+      hide_if_all_good: false,
       charge_threshold: 15,
       threshold: 20,
       drain_count: 10,
@@ -197,6 +229,8 @@ class BatteryManagerCard extends HTMLElement {
 
   setConfig(config) {
     this.config = {
+      default_tab: config.default_tab || "all",
+      hide_if_all_good: config.hide_if_all_good !== undefined ? config.hide_if_all_good : false,
       threshold: config.threshold !== undefined ? config.threshold : 20, 
       charge_threshold: config.charge_threshold !== undefined ? config.charge_threshold : 15, 
       warning_threshold: config.warning_threshold !== undefined ? config.warning_threshold : 40, 
@@ -206,7 +240,7 @@ class BatteryManagerCard extends HTMLElement {
       level_font_size: config.level_font_size !== undefined ? config.level_font_size : 20,
       ...config
     };
-    if (!this.activeTab) this.activeTab = 'all';
+    if (!this.activeTab) this.activeTab = this.config.default_tab;
     this._lastStateHash = null; // Сбрасываем кэш при смене конфига
   }
 
@@ -299,6 +333,16 @@ class BatteryManagerCard extends HTMLElement {
       if (!aBad && bBad) return -1;
       return a.level - b.level;
     });
+
+    // Логика "Авто-невидимки"
+    const totalProblems = lowCount + needChargeCount + unavailableCount + staleCount;
+    if (this.config.hide_if_all_good && totalProblems === 0) {
+      this.style.display = 'none';
+      this._lastStateHash = null; 
+      return; // Прерываем отрисовку для экономии ресурсов
+    } else {
+      this.style.display = 'block';
+    }
 
     // ОПТИМИЗАЦИЯ: Проверяем, изменились ли данные перед перерисовкой
     const stateHash = batteries.map(b => `${b.entity_id}:${b.level}:${b.isAvailable}:${b.isStale}`).join('|') + `|${this.activeTab}`;
@@ -467,6 +511,24 @@ class BatteryManagerCardEditor extends HTMLElement {
           <label for="title">${this.localize('editor_title')}</label>
           <input type="text" id="title" value="${this._config.title !== undefined ? this._config.title : ""}" placeholder="${this.localize('editor_title_ph')}">
         </div>
+        
+        <div class="option">
+          <label for="default_tab">${this.localize('editor_default_tab')}</label>
+          <select id="default_tab">
+            <option value="all" ${this._config.default_tab === 'all' || !this._config.default_tab ? 'selected' : ''}>${this.localize('editor_tab_all')}</option>
+            <option value="attention" ${this._config.default_tab === 'attention' ? 'selected' : ''}>${this.localize('editor_tab_attention')}</option>
+            <option value="type" ${this._config.default_tab === 'type' ? 'selected' : ''}>${this.localize('editor_tab_type')}</option>
+            <option value="drain" ${this._config.default_tab === 'drain' ? 'selected' : ''}>${this.localize('editor_tab_drain')}</option>
+          </select>
+        </div>
+
+        <div class="option checkbox-option">
+          <label>
+            <input type="checkbox" id="hide_if_all_good" ${this._config.hide_if_all_good ? 'checked' : ''}> 
+            ${this.localize('editor_hide_good')}
+          </label>
+        </div>
+
         <div class="option">
           <label for="charge_threshold">${this.localize('editor_charge')}</label>
           <input type="number" id="charge_threshold" value="${this._config.charge_threshold !== undefined ? this._config.charge_threshold : 15}">
@@ -496,12 +558,14 @@ class BatteryManagerCardEditor extends HTMLElement {
         .card-config { display: flex; flex-direction: column; gap: 16px; margin-bottom: 16px; font-family: var(--paper-font-body1_-_font-family); }
         .option { display: flex; flex-direction: column; gap: 8px; }
         .option label { font-size: 14px; font-weight: 500; color: var(--primary-text-color); }
-        .option input { padding: 10px; font-size: 16px; border: 1px solid var(--divider-color); border-radius: 4px; background: var(--card-background-color); color: var(--primary-text-color); outline: none; }
-        .option input:focus { border-color: var(--primary-color); }
+        .option input, .option select { padding: 10px; font-size: 16px; border: 1px solid var(--divider-color); border-radius: 4px; background: var(--card-background-color); color: var(--primary-text-color); outline: none; }
+        .option input:focus, .option select:focus { border-color: var(--primary-color); }
+        .checkbox-option label { display: flex; align-items: center; gap: 10px; cursor: pointer; flex-direction: row; }
+        .checkbox-option input { width: auto; margin: 0; cursor: pointer; }
       </style>
     `;
 
-    this.querySelectorAll('input').forEach(input => {
+    this.querySelectorAll('input, select').forEach(input => {
       input.addEventListener('change', this.valueChanged.bind(this));
       input.addEventListener('input', this.valueChanged.bind(this)); 
     });
@@ -512,7 +576,9 @@ class BatteryManagerCardEditor extends HTMLElement {
     const target = ev.target;
     const newConfig = Object.assign({}, this._config);
     
-    if (target.id === 'title') {
+    if (target.type === 'checkbox') {
+      newConfig[target.id] = target.checked;
+    } else if (target.id === 'title' || target.id === 'default_tab') {
       newConfig[target.id] = target.value;
     } else {
       newConfig[target.id] = Number(target.value);
