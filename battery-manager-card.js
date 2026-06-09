@@ -1,6 +1,6 @@
-// Version: v1.3.0
+// Version: v1.3.1
 console.info(
-  `%c BATTERY-MANAGER-CARD %c v1.3.0`,
+  `%c BATTERY-MANAGER-CARD %c v1.3.1`,
   'color: white; background: #34c759; font-weight: 700;',
   'color: #34c759; background: white; font-weight: 700;'
 );
@@ -13,6 +13,8 @@ const translations = {
     tab_type: "TYPE",
     tab_drain: "DRAIN",
     tab_maintenance: "MAINTENANCE",
+    maintenance_title: "Update Date (HA Battery Notes)",
+    reset_date: "Update replacement/charging date",
     no_connection: "Offline",
     drain_rate: "Drain: ~{0}%/day",
     attention_req: "⚠️ Attention required",
@@ -54,6 +56,8 @@ const translations = {
     tab_type: "ТИП",
     tab_drain: "РАСХОД",
     tab_maintenance: "ОБСЛУЖИВАНИЕ",
+    maintenance_title: "Обновление даты (HA Battery Notes)",
+    reset_date: "Обновить дату замены/зарядки",
     no_connection: "Нет связи",
     drain_rate: "Расход: ~{0}% в день",
     attention_req: "⚠️ Требуется внимание",
@@ -87,6 +91,135 @@ const translations = {
     editor_tab_type: "Тип",
     editor_tab_drain: "Расход",
     editor_hide_good: "Скрыть карточку, если всё в норме"
+  },
+  de: {
+    title_default: "Batteriestatus",
+    tab_all: "ÜBERSICHT",
+    tab_attention: "ACHTUNG",
+    tab_type: "TYP",
+    tab_drain: "VERBRAUCH",
+    tab_maintenance: "WARTUNG",
+    maintenance_title: "Datum aktualisieren (HA Battery Notes)",
+    reset_date: "Wechsel-/Ladedatum aktualisieren",
+    no_connection: "Offline",
+    drain_rate: "Verbrauch: ~{0}%/Tag",
+    attention_req: "⚠️ Achtung erforderlich",
+    offline_count: "❔ <b>{0}</b> Gerät(e) offline",
+    stale_count: "⏳ <b>{0}</b> Gerät(e) ohne Meldung",
+    charge_count: "🔌 <b>{0}</b> Akku(s) laden",
+    replace_note: "🛒 Ersatz benötigt (siehe Typ)",
+    all_good: "✅ Alle Geräte in Ordnung",
+    no_problems: "Keine problematischen Geräte gefunden",
+    no_buys: "✅ Kein Laden oder Kaufen nötig",
+    need_charge: "🔌 Laden erforderlich (<{0}%)",
+    need_buy: "🛒 Dringend kaufen (<{0}%)",
+    pcs: "Stk.",
+    days: "T.",
+    in_use: "Im Einsatz (Bestand)",
+    drain_speed: "Entladegeschwindigkeit",
+    no_drain_data: "Nicht genug Ersatzdaten",
+    total_devices: "Geräte gesamt: {0}",
+    // Editor Translations
+    editor_title: "Kartentitel",
+    editor_title_ph: "Leer lassen für Standard",
+    editor_charge: "🔌 Schwellenwert Akkus (%)",
+    editor_bat: "🔋 Schwellenwert Batterien (%)",
+    editor_drain: "📉 Geräte im 'Verbrauch'-Tab",
+    editor_stale: "⏳ Tage ohne Meldung (offline, 0=aus)",
+    editor_name_size: "🔤 Schriftgröße Name (px)",
+    editor_level_size: "🔢 Schriftgröße Ladestand (px)",
+    editor_default_tab: "Standard-Tab",
+    editor_tab_all: "Übersicht",
+    editor_tab_attention: "Achtung",
+    editor_tab_type: "Typ",
+    editor_tab_drain: "Verbrauch",
+    editor_hide_good: "Karte ausblenden, wenn alles in Ordnung ist"
+  },
+  es: {
+    title_default: "Estado de Baterías",
+    tab_all: "RESUMEN",
+    tab_attention: "ATENCIÓN",
+    tab_type: "TIPO",
+    tab_drain: "DESCARGA",
+    tab_maintenance: "MANTENIMIENTO",
+    maintenance_title: "Actualizar fecha (HA Battery Notes)",
+    reset_date: "Actualizar fecha de cambio/carga",
+    no_connection: "Sin conexión",
+    drain_rate: "Descarga: ~{0}%/día",
+    attention_req: "⚠️ Atención requerida",
+    offline_count: "❔ <b>{0}</b> disp. sin conexión",
+    stale_count: "⏳ <b>{0}</b> disp. sin reportarse",
+    charge_count: "🔌 <b>{0}</b> bat. a cargar",
+    replace_note: "🛒 Reemplazos necesarios (ver Tipo)",
+    all_good: "✅ Todos los dispositivos bien",
+    no_problems: "No se encontraron problemas",
+    no_buys: "✅ No se necesita cargar ni comprar",
+    need_charge: "🔌 Requiere carga (<{0}%)",
+    need_buy: "🛒 Comprar urgente (<{0}%)",
+    pcs: "un.",
+    days: "d.",
+    in_use: "En uso (Inventario)",
+    drain_speed: "Tasa de descarga",
+    no_drain_data: "Faltan datos de reemplazo",
+    total_devices: "Total de dispositivos: {0}",
+    // Editor Translations
+    editor_title: "Título de la tarjeta",
+    editor_title_ph: "Dejar en blanco para predeterminado",
+    editor_charge: "🔌 Umbral para recargables (%)",
+    editor_bat: "🔋 Umbral para baterías (%)",
+    editor_drain: "📉 Dispositivos en pestaña 'Descarga'",
+    editor_stale: "⏳ Días sin reportarse (offline, 0=apagado)",
+    editor_name_size: "🔤 Tamaño fuente del nombre (px)",
+    editor_level_size: "🔢 Tamaño fuente del nivel (px)",
+    editor_default_tab: "Pestaña predeterminada",
+    editor_tab_all: "Resumen",
+    editor_tab_attention: "Atención",
+    editor_tab_type: "Tipo",
+    editor_tab_drain: "Descarga",
+    editor_hide_good: "Ocultar tarjeta si todo está bien"
+  },
+  fr: {
+    title_default: "État des Batteries",
+    tab_all: "APERÇU",
+    tab_attention: "ATTENTION",
+    tab_type: "TYPE",
+    tab_drain: "DÉCHARGE",
+    tab_maintenance: "ENTRETIEN",
+    maintenance_title: "Mettre à jour la date (HA Battery Notes)",
+    reset_date: "Mettre à jour la date de remplacement/charge",
+    no_connection: "Hors ligne",
+    drain_rate: "Décharge : ~{0}%/jour",
+    attention_req: "⚠️ Attention requise",
+    offline_count: "🔌 <b>{0}</b> appareil(s) hors ligne",
+    stale_count: "⏳ <b>{0}</b> appareil(s) sans rapport",
+    charge_count: "🔌 <b>{0}</b> bat. à charger",
+    replace_note: "🛒 Remplacements nécessaires (voir Type)",
+    all_good: "✅ Tous les appareils sont bons",
+    no_problems: "Aucun appareil défectueux",
+    no_buys: "✅ Aucun chargement ou achat nécessaire",
+    need_charge: "🔌 Chargement requis (<{0}%)",
+    need_buy: "🛒 Acheter d'urgence (<{0}%)",
+    pcs: "pcs",
+    days: "j.",
+    in_use: "En cours d'utilisation",
+    drain_speed: "Taux de décharge",
+    no_drain_data: "Pas assez de données de remplacement",
+    total_devices: "Total des appareils : {0}",
+    // Editor Translations
+    editor_title: "Titre de la carte",
+    editor_title_ph: "Laisser vide par défaut",
+    editor_charge: "🔌 Seuil pour rechargeables (%)",
+    editor_bat: "🔋 Seuil pour piles (%)",
+    editor_drain: "📉 Appareils dans l'onglet 'Décharge'",
+    editor_stale: "⏳ Jours sans rapport (hors ligne, 0=désactivé)",
+    editor_name_size: "🔤 Taille de police du nom (px)",
+    editor_level_size: "🔢 Taille de police du niveau (px)",
+    editor_default_tab: "Onglet par défaut",
+    editor_tab_all: "Aperçu",
+    editor_tab_attention: "Attention",
+    editor_tab_type: "Type",
+    editor_tab_drain: "Décharge",
+    editor_hide_good: "Masquer la carte si tout va bien"
   }
 };
 
@@ -159,13 +292,12 @@ class BatteryManagerCard extends HTMLElement {
         const batteryQuantity = state.attributes.battery_quantity || 1;
         const isRechargeable = batteryType.toLowerCase().includes('rechargeable');
 
-        // УМНОЕ ОПРЕДЕЛЕНИЕ ЗАРЯДКИ (в т.ч. для приложения HA Companion)
         const iconState = state.attributes.icon || '';
         const isCharging = state.attributes.battery_state === 'charging' || 
                            state.attributes.battery_state === 'Charging' || 
                            state.attributes.is_charging === true || 
                            state.attributes.status === 'Charging' ||
-                           iconState.includes('charging'); // <-- Вот этот фикс ловит телефон!
+                           iconState.includes('charging');
 
         let typeStr = state.attributes.battery_type_and_quantity || batteryType;
         if (!typeStr.includes('×') && !typeStr.includes('x')) typeStr = `${batteryQuantity}× ${batteryType}`;
@@ -231,7 +363,6 @@ class BatteryManagerCard extends HTMLElement {
   }
 
   render(batteries, typesToBuy, typesToCharge, allTypesInventory, lowCount, needChargeCount, unavailableCount, staleCount, totalProblems) {
-    // === НОВАЯ ПАНЕЛЬ С ИКОНКАМИ ===
     let html = `<div class="tabs-wrapper"><div class="tabs">`;
     const tabsList = [
       { id: 'all', icon: 'mdi:view-dashboard-outline' },
@@ -272,9 +403,9 @@ class BatteryManagerCard extends HTMLElement {
         levelContent = `${bat.level}%`;
       }
 
-      // Если мы на вкладке Обслуживания, вместо % рисуем кнопку сброса
+      // ЛОКАЛИЗОВАННАЯ КНОПКА СБРОСА С ДИНАМИЧЕСКИМ TITLE
       if (isMaintenance) {
-        levelContent = `<div class="reset-btn" data-entity="${bat.entity_id}" title="Сбросить дату">
+        levelContent = `<div class="reset-btn" data-entity="${bat.entity_id}" title="${this.localize('reset_date')}">
                           <ha-icon icon="mdi:battery-sync"></ha-icon>
                         </div>`;
       }
@@ -311,41 +442,36 @@ class BatteryManagerCard extends HTMLElement {
       dr.length ? dr.forEach(b => html += renderRow(b, true)) : html += `<div class="meta" style="text-align:center">${this.localize('no_drain_data')}</div>`;
       html += `</div>`;
     } else if (this.activeTab === 'maintenance') {
-      html += `<div class="list-title">Сброс даты (HA Battery Notes)</div><div class="battery-list">`;
+      // ЛОКАЛИЗОВАННЫЙ ЗАГОЛОВОК ВКЛАДКИ ОБСЛУЖИВАНИЯ
+      html += `<div class="list-title">${this.localize('maintenance_title')}</div><div class="battery-list">`;
       batteries.filter(b => b.isAvailable).forEach(b => html += renderRow(b, false, true));
       html += `</div>`;
     }
 
     this.content.innerHTML = html + `</div>`;
     
-    // Обработчик вкладок
     this.shadowRoot.querySelectorAll('.tab').forEach(t => t.addEventListener('click', () => { 
       if (this.activeTab !== t.dataset.tab) {
         this.activeTab = t.dataset.tab; this._lastStateHash = null; this.hass = this._hass; 
       }
     }));
 
-    // Обработчик строк (открывает more-info)
     this.shadowRoot.querySelectorAll('.battery-row').forEach(r => r.addEventListener('click', () => { 
       if (!r.classList.contains('problem') && this.activeTab !== 'maintenance') { 
         const ev = new Event('hass-more-info', { bubbles: true, composed: true }); ev.detail = { entityId: r.dataset.entity }; this.dispatchEvent(ev); 
       } 
     }));
 
-    // Обработчик кнопок сброса
     this.shadowRoot.querySelectorAll('.reset-btn').forEach(btn => {
       btn.addEventListener('click', (e) => {
-        e.stopPropagation(); // Не открываем окно устройства при клике на сброс
+        e.stopPropagation(); 
         const entityId = btn.dataset.entity;
-        // Достаем device_id из реестра HA
         const deviceId = this._hass.entities && this._hass.entities[entityId] ? this._hass.entities[entityId].device_id : null;
         if (deviceId) {
           this._hass.callService('battery_notes', 'set_battery_replaced', { device_id: deviceId });
         } else {
-          // Если device_id не найден, пробуем передать entity_id
           this._hass.callService('battery_notes', 'set_battery_replaced', { entity_id: entityId });
         }
-        // Визуальная анимация нажатия
         btn.querySelector('ha-icon').style.color = 'var(--apple-green)';
         setTimeout(() => { btn.querySelector('ha-icon').style.color = ''; }, 500);
       });
@@ -360,7 +486,6 @@ class BatteryManagerCard extends HTMLElement {
       .card-header { font-size: 26px; font-weight: 700; padding: 24px 20px 16px; }
       .tabs-wrapper { display: flex; padding: 0 16px 16px; }
       
-      /* НОВЫЙ ДИЗАЙН ВКЛАДОК С ИКОНКАМИ */
       .tabs { display: flex; background: rgba(120, 120, 128, 0.1); border-radius: 9px; padding: 4px; width: 100%; justify-content: space-between; }
       .tab { flex: 1; text-align: center; padding: 8px 0; cursor: pointer; border-radius: 7px; transition: 0.2s; color: var(--secondary-text-color); position: relative; }
       .tab.active { background: var(--card-background-color); box-shadow: 0 3px 8px rgba(0,0,0,0.1); color: var(--primary-text-color); }
@@ -380,7 +505,6 @@ class BatteryManagerCard extends HTMLElement {
       .icon-wrapper.critical { background: rgba(255, 59, 48, 0.12); color: var(--apple-red); }
       .icon-wrapper.problem { background: rgba(142, 142, 147, 0.12); color: var(--apple-grey); }
       
-      /* Анимация плюсиков */
       .icon-wrapper.charging::after {
         content: '+'; position: absolute; color: var(--apple-green); font-weight: bold; font-size: 18px;
         right: -2px; bottom: 0px; animation: floatUp 1.5s infinite ease-in; pointer-events: none; text-shadow: 0 0 4px rgba(255, 255, 255, 0.8);
@@ -397,7 +521,6 @@ class BatteryManagerCard extends HTMLElement {
       .level.warning { color: var(--apple-orange); }
       .level.critical { color: var(--apple-red); }
       
-      /* Кнопка сброса (Гаечный ключ) */
       .reset-btn { color: var(--apple-grey); padding: 4px; border-radius: 50%; transition: all 0.2s; cursor: pointer; }
       .reset-btn:hover { background: rgba(142, 142, 147, 0.2); color: var(--primary-text-color); }
       .reset-btn ha-icon { --mdc-icon-size: 24px; transition: color 0.2s; }
@@ -419,8 +542,7 @@ class BatteryManagerCard extends HTMLElement {
   }
 }
 
-// GUI Редактор остался без изменений (он работает отлично)
-// ... (оставил заглушку для краткости, вставляй свой GUI редактор) ...
+// GUI Редактор карточки
 class BatteryManagerCardEditor extends HTMLElement {
   setConfig(config) { this._config = config; this.renderForm(); }
   set hass(hass) { this._hass = hass; this.renderForm(); }
@@ -497,8 +619,10 @@ class BatteryManagerCardEditor extends HTMLElement {
     const event = new CustomEvent("config-changed", { detail: { config: newConfig }, bubbles: true, composed: true, }); this.dispatchEvent(event);
   }
 }
+
 customElements.define('battery-manager-card-editor', BatteryManagerCardEditor);
 customElements.define('battery-manager-card', BatteryManagerCard);
+
 window.customCards = window.customCards || [];
 window.customCards.push({
   type: "battery-manager-card",
