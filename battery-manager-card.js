@@ -1,6 +1,6 @@
-// Version: v1.3.1
+// Version: v1.3.2
 console.info(
-  `%c BATTERY-MANAGER-CARD %c v1.3.1`,
+  `%c BATTERY-MANAGER-CARD %c v1.3.1-fix`,
   'color: white; background: #34c759; font-weight: 700;',
   'color: #34c759; background: white; font-weight: 700;'
 );
@@ -190,7 +190,7 @@ const translations = {
     no_connection: "Hors ligne",
     drain_rate: "Décharge : ~{0}%/jour",
     attention_req: "⚠️ Attention requise",
-    offline_count: "🔌 <b>{0}</b> appareil(s) hors ligne",
+    offline_count: "❔ <b>{0}</b> appareil(s) hors ligne",
     stale_count: "⏳ <b>{0}</b> appareil(s) sans rapport",
     charge_count: "🔌 <b>{0}</b> bat. à charger",
     replace_note: "🛒 Remplacements nécessaires (voir Type)",
@@ -403,7 +403,6 @@ class BatteryManagerCard extends HTMLElement {
         levelContent = `${bat.level}%`;
       }
 
-      // ЛОКАЛИЗОВАННАЯ КНОПКА СБРОСА С ДИНАМИЧЕСКИМ TITLE
       if (isMaintenance) {
         levelContent = `<div class="reset-btn" data-entity="${bat.entity_id}" title="${this.localize('reset_date')}">
                           <ha-icon icon="mdi:battery-sync"></ha-icon>
@@ -442,7 +441,6 @@ class BatteryManagerCard extends HTMLElement {
       dr.length ? dr.forEach(b => html += renderRow(b, true)) : html += `<div class="meta" style="text-align:center">${this.localize('no_drain_data')}</div>`;
       html += `</div>`;
     } else if (this.activeTab === 'maintenance') {
-      // ЛОКАЛИЗОВАННЫЙ ЗАГОЛОВОК ВКЛАДКИ ОБСЛУЖИВАНИЯ
       html += `<div class="list-title">${this.localize('maintenance_title')}</div><div class="battery-list">`;
       batteries.filter(b => b.isAvailable).forEach(b => html += renderRow(b, false, true));
       html += `</div>`;
@@ -542,7 +540,6 @@ class BatteryManagerCard extends HTMLElement {
   }
 }
 
-// GUI Редактор карточки
 class BatteryManagerCardEditor extends HTMLElement {
   setConfig(config) { this._config = config; this.renderForm(); }
   set hass(hass) { this._hass = hass; this.renderForm(); }
