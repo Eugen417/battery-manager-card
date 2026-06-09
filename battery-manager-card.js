@@ -1,4 +1,4 @@
-// Version: v1.3.2
+// Version: v1.3.1-fix
 console.info(
   `%c BATTERY-MANAGER-CARD %c v1.3.1-fix`,
   'color: white; background: #34c759; font-weight: 700;',
