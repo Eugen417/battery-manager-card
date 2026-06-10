@@ -1,6 +1,6 @@
-// Version: v1.3.3
+// Version: v1.3.4
 console.info(
-  `%c BATTERY-MANAGER-CARD %c v1.3.3`,
+  `%c BATTERY-MANAGER-CARD %c v1.3.4`,
   'color: white; background: #34c759; font-weight: 700;',
   'color: #34c759; background: white; font-weight: 700;'
 );
@@ -408,11 +408,12 @@ class BatteryManagerCard extends HTMLElement {
     });
     html += `</div></div><div class="tab-content">`;
 
-    // Search bar logic
+    // Search bar with Clear (X) Button logic
     if (this.activeTab !== 'type') {
       html += `<div class="search-bar">
                  <ha-icon icon="mdi:magnify"></ha-icon>
                  <input type="text" id="searchInput" placeholder="${this.localize('search_placeholder')}" value="${this.searchQuery}">
+                 <ha-icon icon="mdi:close-circle" id="searchClear" style="display: ${this.searchQuery ? 'block' : 'none'};"></ha-icon>
                </div>`;
     }
 
@@ -518,22 +519,36 @@ class BatteryManagerCard extends HTMLElement {
       });
     });
 
-    // Search input listener
+    // Search and Clear input logic
     const sInput = this.shadowRoot.querySelector('#searchInput');
+    const sClear = this.shadowRoot.querySelector('#searchClear');
+    
     if (sInput) {
-      sInput.addEventListener('input', (e) => {
-        const query = e.target.value.toLowerCase();
-        this.searchQuery = e.target.value;
+      const applySearch = (query) => {
+        this.searchQuery = query;
+        if (sClear) sClear.style.display = query ? 'block' : 'none';
+        const qLower = query.toLowerCase();
+        
         this.shadowRoot.querySelectorAll('.battery-row').forEach(row => {
           const entity = row.dataset.entity.toLowerCase();
           const nameText = row.querySelector('.name').textContent.toLowerCase();
-          if (!query || nameText.includes(query) || entity.includes(query)) {
+          if (!qLower || nameText.includes(qLower) || entity.includes(qLower)) {
             row.style.display = '';
           } else {
             row.style.display = 'none';
           }
         });
-      });
+      };
+
+      sInput.addEventListener('input', (e) => applySearch(e.target.value));
+
+      if (sClear) {
+        sClear.addEventListener('click', () => {
+          sInput.value = '';
+          applySearch('');
+          sInput.focus();
+        });
+      }
     }
   }
 
@@ -558,6 +573,8 @@ class BatteryManagerCard extends HTMLElement {
       .search-bar ha-icon { --mdc-icon-size: 20px; color: var(--secondary-text-color); margin-right: 8px; }
       .search-bar input { flex: 1; background: transparent; border: none; color: var(--primary-text-color); font-family: inherit; font-size: 15px; outline: none; }
       .search-bar input::placeholder { color: var(--secondary-text-color); opacity: 0.7; }
+      .search-bar ha-icon#searchClear { margin-right: 0; margin-left: 8px; cursor: pointer; opacity: 0.5; transition: opacity 0.2s; }
+      .search-bar ha-icon#searchClear:hover { opacity: 1; color: var(--primary-text-color); }
       
       .battery-list { display: flex; flex-direction: column; gap: 2px; }
       
