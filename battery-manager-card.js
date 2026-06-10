@@ -1,6 +1,6 @@
-// Version: v1.3.2
+// Version: v1.3.3
 console.info(
-  `%c BATTERY-MANAGER-CARD %c v1.3.2`,
+  `%c BATTERY-MANAGER-CARD %c v1.3.3`,
   'color: white; background: #34c759; font-weight: 700;',
   'color: #34c759; background: white; font-weight: 700;'
 );
@@ -13,6 +13,10 @@ const translations = {
     tab_type: "TYPE",
     tab_drain: "DRAIN",
     tab_maintenance: "MAINTENANCE",
+    all_title: "All Batteries Overview",
+    attention_title: "Attention Required",
+    type_title: "Battery Type Analytics",
+    drain_title: "Highest Discharge Rates",
     maintenance_title: "Update Date (HA Battery Notes)",
     reset_date: "Update replacement/charging date",
     search_placeholder: "Search devices...",
@@ -57,6 +61,10 @@ const translations = {
     tab_type: "ТИП",
     tab_drain: "РАСХОД",
     tab_maintenance: "ОБСЛУЖИВАНИЕ",
+    all_title: "Обзор всех элементов питания",
+    attention_title: "Устройства, требующие внимания",
+    type_title: "Аналитика по типам батареек",
+    drain_title: "Наивысшая скорость разряда",
     maintenance_title: "Обновление даты (HA Battery Notes)",
     reset_date: "Обновить дату замены/зарядки",
     search_placeholder: "Поиск устройств...",
@@ -101,6 +109,10 @@ const translations = {
     tab_type: "TYP",
     tab_drain: "VERBRAUCH",
     tab_maintenance: "WARTUNG",
+    all_title: "Übersicht aller Batterien",
+    attention_title: "Geräte, die Aufmerksamkeit erfordern",
+    type_title: "Batterietyp-Analyse",
+    drain_title: "Höchste Entladungsraten",
     maintenance_title: "Datum aktualisieren (HA Battery Notes)",
     reset_date: "Wechsel-/Ladedatum aktualisieren",
     search_placeholder: "Geräte suchen...",
@@ -145,6 +157,10 @@ const translations = {
     tab_type: "TIPO",
     tab_drain: "DESCARGA",
     tab_maintenance: "MANTENIMIENTO",
+    all_title: "Resumen de todas las baterías",
+    attention_title: "Dispositivos que requieren atención",
+    type_title: "Análisis por tipo de batería",
+    drain_title: "Mayores tasas de descarga",
     maintenance_title: "Actualizar fecha (HA Battery Notes)",
     reset_date: "Actualizar fecha de cambio/carga",
     search_placeholder: "Buscar dispositivos...",
@@ -189,6 +205,10 @@ const translations = {
     tab_type: "TYPE",
     tab_drain: "DÉCHARGE",
     tab_maintenance: "ENTRETIEN",
+    all_title: "Aperçu de toutes les piles",
+    attention_title: "Appareils nécessitant une attention",
+    type_title: "Analyse par type de pile",
+    drain_title: "Taux de décharge les plus élevés",
     maintenance_title: "Mettre à jour la date (HA Battery Notes)",
     reset_date: "Mettre à jour la date de remplacement/charge",
     search_placeholder: "Rechercher des appareils...",
@@ -423,7 +443,6 @@ class BatteryManagerCard extends HTMLElement {
                         </div>`;
       }
 
-      // Live Search initial display logic
       const q = this.searchQuery.toLowerCase();
       const matchName = bat.name.toLowerCase().includes(q);
       const matchEntity = bat.entity_id.toLowerCase().includes(q);
@@ -437,9 +456,9 @@ class BatteryManagerCard extends HTMLElement {
     };
 
     if (this.activeTab === 'all') {
-      html += `<div class="battery-list">`; batteries.forEach(b => html += renderRow(b)); html += `</div>`;
+      html += `<div class="list-title">${this.localize('all_title')}</div><div class="battery-list">`; batteries.forEach(b => html += renderRow(b)); html += `</div>`;
     } else if (this.activeTab === 'attention') {
-      html += `<div class="rec-box ${totalProblems > 0 ? 'warning' : 'ok'}"><div class="rec-title">${totalProblems > 0 ? this.localize('attention_req') : this.localize('all_good')}</div><div class="rec-status-list">`;
+      html += `<div class="list-title">${this.localize('attention_title')}</div><div class="rec-box ${totalProblems > 0 ? 'warning' : 'ok'}"><div class="rec-title">${totalProblems > 0 ? this.localize('attention_req') : this.localize('all_good')}</div><div class="rec-status-list">`;
       if (unavailableCount > 0) html += `<div class="rec-stat-item">${this.localize('offline_count', unavailableCount)}</div>`;
       if (staleCount > 0) html += `<div class="rec-stat-item">${this.localize('stale_count', staleCount)}</div>`;
       if (needChargeCount > 0) html += `<div class="rec-stat-item">${this.localize('charge_count', needChargeCount)}</div>`;
@@ -449,6 +468,7 @@ class BatteryManagerCard extends HTMLElement {
       att.length ? att.forEach(b => html += renderRow(b)) : html += `<div class="meta" style="text-align:center">${this.localize('no_problems')}</div>`;
       html += `</div>`;
     } else if (this.activeTab === 'type') {
+      html += `<div class="list-title">${this.localize('type_title')}</div>`;
       let typeHtml = '';
       if (Object.keys(typesToCharge).length || Object.keys(typesToBuy).length) {
         if (Object.keys(typesToCharge).length) typeHtml += `<div class="buy-box charge-box"><div class="box-title" style="color:var(--apple-red)">${this.localize('need_charge', this.config.charge_threshold)}</div><ul class="type-list">${Object.entries(typesToCharge).map(([t,q])=>`<li><span class="type-badge charge-badge">${t}</span> <b>${q} ${this.localize('pcs')}</b></li>`).join('')}</ul></div>`;
@@ -456,7 +476,7 @@ class BatteryManagerCard extends HTMLElement {
       } else typeHtml += `<div class="buy-box ok">${this.localize('no_buys')}</div>`;
       html += `<div class="inventory-section">${typeHtml}<div class="list-title" style="margin-top:20px">${this.localize('in_use')}</div><ul class="type-list minimal">${Object.entries(allTypesInventory).map(([t,q])=>`<li><span class="type-name">${t}</span> <span class="type-total">${q} ${this.localize('pcs')}</span></li>`).join('')}</ul></div>`;
     } else if (this.activeTab === 'drain') {
-      html += `<div class="battery-list">`;
+      html += `<div class="list-title">${this.localize('drain_title')}</div><div class="battery-list">`;
       const dr = batteries.filter(b => b.drain_rate > 0 && b.isAvailable && !b.isStale).sort((a,b)=>b.drain_rate-a.drain_rate).slice(0, this.config.drain_count);
       dr.length ? dr.forEach(b => html += renderRow(b, true)) : html += `<div class="meta" style="text-align:center">${this.localize('no_drain_data')}</div>`;
       html += `</div>`;
@@ -498,7 +518,7 @@ class BatteryManagerCard extends HTMLElement {
       });
     });
 
-    // Search input listener (Live CSS Filtering to keep focus and speed)
+    // Search input listener
     const sInput = this.shadowRoot.querySelector('#searchInput');
     if (sInput) {
       sInput.addEventListener('input', (e) => {
@@ -534,7 +554,6 @@ class BatteryManagerCard extends HTMLElement {
 
       .tab-content { padding: 0 16px; }
       
-      /* Search Bar Styles */
       .search-bar { display: flex; align-items: center; background: rgba(120, 120, 128, 0.08); border-radius: 8px; padding: 8px 12px; margin-bottom: 16px; }
       .search-bar ha-icon { --mdc-icon-size: 20px; color: var(--secondary-text-color); margin-right: 8px; }
       .search-bar input { flex: 1; background: transparent; border: none; color: var(--primary-text-color); font-family: inherit; font-size: 15px; outline: none; }
@@ -543,8 +562,6 @@ class BatteryManagerCard extends HTMLElement {
       .battery-list { display: flex; flex-direction: column; gap: 2px; }
       
       .battery-row { display: flex; flex-direction: row; align-items: center; gap: 16px; padding: 12px 16px; border-radius: 12px; margin: 0 -8px; cursor: pointer; }
-      
-      /* FIX FOR DARK THEME HOVER */
       .battery-row:hover { background: var(--secondary-background-color, rgba(120, 120, 128, 0.16)); }
       .battery-row:hover .name, .battery-row:hover .meta { color: var(--primary-text-color); }
       
@@ -585,7 +602,7 @@ class BatteryManagerCard extends HTMLElement {
       .type-list li { display: flex; justify-content: space-between; }
       .type-badge { background: var(--apple-orange); color: #fff; padding: 2px 8px; border-radius: 6px; font-size: 12px; font-weight: 700; }
       .charge-badge { background: var(--apple-red); }
-      .list-title { font-weight: 700; font-size: 16px; margin-bottom: 12px; color: var(--secondary-text-color); text-transform: uppercase;}
+      .list-title { font-weight: 700; font-size: 14px; margin-bottom: 12px; color: var(--secondary-text-color); text-transform: uppercase; letter-spacing: 0.5px;}
     `;
     this.shadowRoot.appendChild(s);
   }
