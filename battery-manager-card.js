@@ -1,6 +1,6 @@
-// Version: v1.3.1-fix
+// Version: v1.3.2
 console.info(
-  `%c BATTERY-MANAGER-CARD %c v1.3.1-fix`,
+  `%c BATTERY-MANAGER-CARD %c v1.3.2`,
   'color: white; background: #34c759; font-weight: 700;',
   'color: #34c759; background: white; font-weight: 700;'
 );
@@ -15,6 +15,7 @@ const translations = {
     tab_maintenance: "MAINTENANCE",
     maintenance_title: "Update Date (HA Battery Notes)",
     reset_date: "Update replacement/charging date",
+    search_placeholder: "Search devices...",
     no_connection: "Offline",
     drain_rate: "Drain: ~{0}%/day",
     attention_req: "⚠️ Attention required",
@@ -58,6 +59,7 @@ const translations = {
     tab_maintenance: "ОБСЛУЖИВАНИЕ",
     maintenance_title: "Обновление даты (HA Battery Notes)",
     reset_date: "Обновить дату замены/зарядки",
+    search_placeholder: "Поиск устройств...",
     no_connection: "Нет связи",
     drain_rate: "Расход: ~{0}% в день",
     attention_req: "⚠️ Требуется внимание",
@@ -101,6 +103,7 @@ const translations = {
     tab_maintenance: "WARTUNG",
     maintenance_title: "Datum aktualisieren (HA Battery Notes)",
     reset_date: "Wechsel-/Ladedatum aktualisieren",
+    search_placeholder: "Geräte suchen...",
     no_connection: "Offline",
     drain_rate: "Verbrauch: ~{0}%/Tag",
     attention_req: "⚠️ Achtung erforderlich",
@@ -144,6 +147,7 @@ const translations = {
     tab_maintenance: "MANTENIMIENTO",
     maintenance_title: "Actualizar fecha (HA Battery Notes)",
     reset_date: "Actualizar fecha de cambio/carga",
+    search_placeholder: "Buscar dispositivos...",
     no_connection: "Sin conexión",
     drain_rate: "Descarga: ~{0}%/día",
     attention_req: "⚠️ Atención requerida",
@@ -187,6 +191,7 @@ const translations = {
     tab_maintenance: "ENTRETIEN",
     maintenance_title: "Mettre à jour la date (HA Battery Notes)",
     reset_date: "Mettre à jour la date de remplacement/charge",
+    search_placeholder: "Rechercher des appareils...",
     no_connection: "Hors ligne",
     drain_rate: "Décharge : ~{0}%/jour",
     attention_req: "⚠️ Attention requise",
@@ -247,6 +252,7 @@ class BatteryManagerCard extends HTMLElement {
       ...config
     };
     if (!this.activeTab) this.activeTab = this.config.default_tab;
+    if (this.searchQuery === undefined) this.searchQuery = "";
     this._lastStateHash = null;
   }
 
@@ -382,6 +388,14 @@ class BatteryManagerCard extends HTMLElement {
     });
     html += `</div></div><div class="tab-content">`;
 
+    // Search bar logic
+    if (this.activeTab !== 'type') {
+      html += `<div class="search-bar">
+                 <ha-icon icon="mdi:magnify"></ha-icon>
+                 <input type="text" id="searchInput" placeholder="${this.localize('search_placeholder')}" value="${this.searchQuery}">
+               </div>`;
+    }
+
     const renderRow = (bat, showDrain = false, isMaintenance = false) => {
       let lClass = (!bat.isAvailable || bat.isStale) ? 'problem' : bat.level < (bat.isRechargeable ? this.config.charge_threshold : this.config.threshold) ? 'critical' : bat.level < this.config.warning_threshold ? 'warning' : 'good';
       let meta = bat.type_str;
@@ -409,7 +423,13 @@ class BatteryManagerCard extends HTMLElement {
                         </div>`;
       }
 
-      return `<div class="battery-row ${lClass}" data-entity="${bat.entity_id}">
+      // Live Search initial display logic
+      const q = this.searchQuery.toLowerCase();
+      const matchName = bat.name.toLowerCase().includes(q);
+      const matchEntity = bat.entity_id.toLowerCase().includes(q);
+      const displayStyle = (!q || matchName || matchEntity) ? '' : 'style="display: none;"';
+
+      return `<div class="battery-row ${lClass}" data-entity="${bat.entity_id}" ${displayStyle}>
                 <div class="icon-wrapper ${iconClass}"><ha-icon icon="${bat.icon}"></ha-icon></div>
                 <div class="name-col"><div class="name">${bat.name}</div><div class="meta">${meta}</div></div>
                 <div class="level-col"><span class="level ${lClass}">${levelContent}</span></div>
@@ -448,18 +468,21 @@ class BatteryManagerCard extends HTMLElement {
 
     this.content.innerHTML = html + `</div>`;
     
+    // Tab switching listener
     this.shadowRoot.querySelectorAll('.tab').forEach(t => t.addEventListener('click', () => { 
       if (this.activeTab !== t.dataset.tab) {
         this.activeTab = t.dataset.tab; this._lastStateHash = null; this.hass = this._hass; 
       }
     }));
 
+    // More-info listener
     this.shadowRoot.querySelectorAll('.battery-row').forEach(r => r.addEventListener('click', () => { 
       if (!r.classList.contains('problem') && this.activeTab !== 'maintenance') { 
         const ev = new Event('hass-more-info', { bubbles: true, composed: true }); ev.detail = { entityId: r.dataset.entity }; this.dispatchEvent(ev); 
       } 
     }));
 
+    // Reset button listener
     this.shadowRoot.querySelectorAll('.reset-btn').forEach(btn => {
       btn.addEventListener('click', (e) => {
         e.stopPropagation(); 
@@ -474,6 +497,24 @@ class BatteryManagerCard extends HTMLElement {
         setTimeout(() => { btn.querySelector('ha-icon').style.color = ''; }, 500);
       });
     });
+
+    // Search input listener (Live CSS Filtering to keep focus and speed)
+    const sInput = this.shadowRoot.querySelector('#searchInput');
+    if (sInput) {
+      sInput.addEventListener('input', (e) => {
+        const query = e.target.value.toLowerCase();
+        this.searchQuery = e.target.value;
+        this.shadowRoot.querySelectorAll('.battery-row').forEach(row => {
+          const entity = row.dataset.entity.toLowerCase();
+          const nameText = row.querySelector('.name').textContent.toLowerCase();
+          if (!query || nameText.includes(query) || entity.includes(query)) {
+            row.style.display = '';
+          } else {
+            row.style.display = 'none';
+          }
+        });
+      });
+    }
   }
 
   addStyles() {
@@ -492,10 +533,20 @@ class BatteryManagerCard extends HTMLElement {
       .tab-count { font-size: 12px; font-weight: 600; margin-left: 6px; vertical-align: text-bottom; }
 
       .tab-content { padding: 0 16px; }
+      
+      /* Search Bar Styles */
+      .search-bar { display: flex; align-items: center; background: rgba(120, 120, 128, 0.08); border-radius: 8px; padding: 8px 12px; margin-bottom: 16px; }
+      .search-bar ha-icon { --mdc-icon-size: 20px; color: var(--secondary-text-color); margin-right: 8px; }
+      .search-bar input { flex: 1; background: transparent; border: none; color: var(--primary-text-color); font-family: inherit; font-size: 15px; outline: none; }
+      .search-bar input::placeholder { color: var(--secondary-text-color); opacity: 0.7; }
+      
       .battery-list { display: flex; flex-direction: column; gap: 2px; }
       
       .battery-row { display: flex; flex-direction: row; align-items: center; gap: 16px; padding: 12px 16px; border-radius: 12px; margin: 0 -8px; cursor: pointer; }
-      .battery-row:hover { background: var(--secondary-background-color); }
+      
+      /* FIX FOR DARK THEME HOVER */
+      .battery-row:hover { background: var(--secondary-background-color, rgba(120, 120, 128, 0.16)); }
+      .battery-row:hover .name, .battery-row:hover .meta { color: var(--primary-text-color); }
       
       .icon-wrapper { position: relative; flex: 0 0 auto; width: 40px; height: 40px; border-radius: 10px; display: flex; align-items: center; justify-content: center; }
       .icon-wrapper.good { background: rgba(52, 199, 89, 0.12); color: var(--apple-green); }
