@@ -1,6 +1,6 @@
-// Version: v1.3.4
+// Version: v1.3.5
 console.info(
-  `%c BATTERY-MANAGER-CARD %c v1.3.4`,
+  `%c BATTERY-MANAGER-CARD %c v1.3.5`,
   'color: white; background: #34c759; font-weight: 700;',
   'color: #34c759; background: white; font-weight: 700;'
 );
@@ -19,7 +19,7 @@ const translations = {
     drain_title: "Highest Discharge Rates",
     maintenance_title: "Update Date (HA Battery Notes)",
     reset_date: "Update replacement/charging date",
-    search_placeholder: "Search devices...",
+    search_placeholder: "Search devices, areas or types...",
     no_connection: "Offline",
     drain_rate: "Drain: ~{0}%/day",
     attention_req: "⚠️ Attention required",
@@ -67,7 +67,7 @@ const translations = {
     drain_title: "Наивысшая скорость разряда",
     maintenance_title: "Обновление даты (HA Battery Notes)",
     reset_date: "Обновить дату замены/зарядки",
-    search_placeholder: "Поиск устройств...",
+    search_placeholder: "Поиск (имя, комната, тип)...",
     no_connection: "Нет связи",
     drain_rate: "Расход: ~{0}% в день",
     attention_req: "⚠️ Требуется внимание",
@@ -115,7 +115,7 @@ const translations = {
     drain_title: "Höchste Entladungsraten",
     maintenance_title: "Datum aktualisieren (HA Battery Notes)",
     reset_date: "Wechsel-/Ladedatum aktualisieren",
-    search_placeholder: "Geräte suchen...",
+    search_placeholder: "Suchen (Name, Raum, Typ)...",
     no_connection: "Offline",
     drain_rate: "Verbrauch: ~{0}%/Tag",
     attention_req: "⚠️ Achtung erforderlich",
@@ -163,7 +163,7 @@ const translations = {
     drain_title: "Mayores tasas de descarga",
     maintenance_title: "Actualizar fecha (HA Battery Notes)",
     reset_date: "Actualizar fecha de cambio/carga",
-    search_placeholder: "Buscar dispositivos...",
+    search_placeholder: "Buscar (nombre, área, tipo)...",
     no_connection: "Sin conexión",
     drain_rate: "Descarga: ~{0}%/día",
     attention_req: "⚠️ Atención requerida",
@@ -211,7 +211,7 @@ const translations = {
     drain_title: "Taux de décharge les plus élevés",
     maintenance_title: "Mettre à jour la date (HA Battery Notes)",
     reset_date: "Mettre à jour la date de remplacement/charge",
-    search_placeholder: "Rechercher des appareils...",
+    search_placeholder: "Recherche (nom, pièce, type)...",
     no_connection: "Hors ligne",
     drain_rate: "Décharge : ~{0}%/jour",
     attention_req: "⚠️ Attention requise",
@@ -343,6 +343,19 @@ class BatteryManagerCard extends HTMLElement {
           }
         }
 
+        // Поиск Пространства (Area) через реестры Home Assistant
+        let areaName = "";
+        if (hass.entities && hass.entities[state.entity_id]) {
+            const ent = hass.entities[state.entity_id];
+            let aId = ent.area_id;
+            if (!aId && ent.device_id && hass.devices && hass.devices[ent.device_id]) {
+                aId = hass.devices[ent.device_id].area_id;
+            }
+            if (aId && hass.areas && hass.areas[aId]) {
+                areaName = hass.areas[aId].name;
+            }
+        }
+
         batteries.push({
           entity_id: state.entity_id,
           name: state.attributes.friendly_name.replace(' Батарея+', '').trim(),
@@ -350,7 +363,7 @@ class BatteryManagerCard extends HTMLElement {
           last_replaced: isAvailable ? this.formatDate(state.attributes.battery_last_replaced) : null,
           isStale, days_since_report: daysSinceReport,
           drain_rate: drainRate, icon: this.getBatteryIcon(level, isAvailable),
-          isCharging 
+          isCharging, area: areaName 
         });
 
         allTypesInventory[batteryType] = (allTypesInventory[batteryType] || 0) + batteryQuantity;
@@ -408,7 +421,7 @@ class BatteryManagerCard extends HTMLElement {
     });
     html += `</div></div><div class="tab-content">`;
 
-    // Search bar with Clear (X) Button logic
+    // Search bar
     if (this.activeTab !== 'type') {
       html += `<div class="search-bar">
                  <ha-icon icon="mdi:magnify"></ha-icon>
@@ -424,6 +437,11 @@ class BatteryManagerCard extends HTMLElement {
       let iconClass = lClass;
       
       if (bat.isCharging) iconClass += ' charging';
+      
+      // Добавляем Пространство (Area) в meta, если оно есть
+      if (bat.area) {
+        meta += ` • ${bat.area}`;
+      }
 
       if (!bat.isAvailable) {
         meta += ` • ${this.localize('no_connection')}`;
@@ -447,7 +465,8 @@ class BatteryManagerCard extends HTMLElement {
       const q = this.searchQuery.toLowerCase();
       const matchName = bat.name.toLowerCase().includes(q);
       const matchEntity = bat.entity_id.toLowerCase().includes(q);
-      const displayStyle = (!q || matchName || matchEntity) ? '' : 'style="display: none;"';
+      const matchMeta = meta.toLowerCase().includes(q);
+      const displayStyle = (!q || matchName || matchEntity || matchMeta) ? '' : 'style="display: none;"';
 
       return `<div class="battery-row ${lClass}" data-entity="${bat.entity_id}" ${displayStyle}>
                 <div class="icon-wrapper ${iconClass}"><ha-icon icon="${bat.icon}"></ha-icon></div>
@@ -532,7 +551,9 @@ class BatteryManagerCard extends HTMLElement {
         this.shadowRoot.querySelectorAll('.battery-row').forEach(row => {
           const entity = row.dataset.entity.toLowerCase();
           const nameText = row.querySelector('.name').textContent.toLowerCase();
-          if (!qLower || nameText.includes(qLower) || entity.includes(qLower)) {
+          const metaText = row.querySelector('.meta').textContent.toLowerCase();
+          
+          if (!qLower || nameText.includes(qLower) || entity.includes(qLower) || metaText.includes(qLower)) {
             row.style.display = '';
           } else {
             row.style.display = 'none';
