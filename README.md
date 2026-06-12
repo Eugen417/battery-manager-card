@@ -43,6 +43,7 @@
   * **ТИП:** Инвентаризация — показывает, сколько и каких батареек используется в доме, формирует список покупок и устройств на зарядку.
   * **РАСХОД:** Аналитика скорости разряда (% в день) на основе даты последней замены.
   * **ОБСЛУЖИВАНИЕ:** Кнопки для мгновенного обновления даты замены/зарядки прямо из интерфейса карточки (в 1 клик).
+* ⚡ **Статус зарядки**: Отображение анимированного индикатора (+) для устройств, находящихся в процессе зарядки.
 * ⏳ **Зависшие датчики**: Отображение устройств, которые отвалились от сети или давно не присылали данные.
 * 🔠 **Кастомизация**: Возможность изменить размер шрифтов под ваш дашборд.
 
@@ -74,6 +75,7 @@ Modern and interactive custom card for Home Assistant, designed for **[HA-Batter
   * **TYPE:** Inventory tracking — shows total batteries by type and generates a shopping/recharge list.
   * **DRAIN:** Analytics showing battery drain rate (% per day) based on replacement dates.
   * **MAINTENANCE:** 1-click buttons to quickly update replacement/charging dates directly from the card.
+* ⚡ **Charging Status**: Displays an animated (+) indicator for devices currently being charged.
 * ⏳ **Stale Devices**: Displays devices that have gone offline or haven't reported data in a while.
 * 🔠 **Customizable Fonts**: Change font sizes to fit your dashboard perfectly.
 
@@ -105,6 +107,7 @@ Moderne, interaktive benutzerdefinierte Karte für Home Assistant, optimiert fü
   * **TYP:** Bestandsaufnahme — zeigt Batterien nach Typ und erstellt eine Einkaufs-/Ladeliste.
   * **VERBRAUCH:** Analyse der Entladegeschwindigkeit (% pro Tag).
   * **WARTUNG:** 1-Klick-Buttons zum schnellen Aktualisieren der Wechsel-/Ladedaten direkt in der Karte.
+* ⚡ **Ladestatus**: Zeigt einen animierten (+)-Indikator für Geräte an, die gerade geladen werden.
 * ⏳ **Inaktive Geräte**: Zeigt Geräte an, die offline sind oder sich lange nicht gemeldet haben.
 * 🔠 **Anpassbare Schriftarten**: Ändern Sie die Schriftgrößen für Ihr Dashboard.
 
@@ -136,6 +139,7 @@ Tarjeta interactiva moderna para Home Assistant, diseñada para **[HA-Battery-No
   * **TIPO:** Inventario: muestra el total de baterías por tipo y genera una lista de compras/recargas.
   * **DESCARGA:** Análisis del consumo diario (% por día).
   * **MANTENIMIENTO:** Botones de 1 clic para actualizar rápidamente las fechas de cambio/carga directamente en la tarjeta.
+* ⚡ **Estado de carga**: Muestra un indicador animado (+) para los dispositivos que se están cargando actualmente.
 * ⏳ **Dispositivos inactivos**: Muestra dispositivos que se han desconectado o no han enviado datos en mucho tiempo.
 * 🔠 **Fuentes personalizables**: Cambie el tamaño de fuente para nombres y porcentajes.
 
@@ -167,6 +171,7 @@ Carte interactive moderne pour Home Assistant, conçue pour **[HA-Battery-Notes]
   * **TYPE:** Inventaire — affiche le total par type et génère une liste d'achats/recharges.
   * **DÉCHARGE:** Analyse du taux de décharge (% par jour).
   * **ENTRETIEN:** Boutons en 1 clic pour mettre à jour rapidement les dates de remplacement/charge directement depuis la carte.
+* ⚡ **État de charge**: Affiche un indicateur animé (+) pour les appareils en cours de charge.
 * ⏳ **Appareils inactifs**: Affiche les appareils hors ligne ou qui n'ont pas envoyé de données depuis longtemps.
 * 🔠 **Polices personnalisables**: Modifiez la taille du texte pour l'adapter à votre tableau de bord.
 
