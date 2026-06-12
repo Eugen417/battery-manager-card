@@ -36,13 +36,15 @@
 
 ### ✨ Возможности
 * 🖥️ **Визуальный редактор (UI)**: Никакого YAML! Просто добавьте карточку и настройте все параметры в удобном интерфейсе.
-* 🔍 **Автоматический поиск**: Сама находит все устройства с классом `battery`.
-* 📑 **Вкладки**: ОБЗОР (все), ВНИМАНИЕ (проблемные), ТИП (инвентарь), РАСХОД (аналитика), **ОБСЛУЖИВАНИЕ (быстрое обновление даты замены/зарядки)**.
-* 🎨 **Новый дизайн и анимации**: Компактные табы на основе иконок (MDI) и живая CSS-анимация заряжающихся устройств.
-* ⏳ **Поиск зависших датчиков**: Отслеживание устройств, которые отвалились от сети и давно не присылали данные.
-* 📉 **Умная аналитика**: Расход заряда (% в день) на основе даты последней замены.
+* 🔍 **Поиск и автоопределение**: Карточка автоматически выводит информацию обо всех устройствах с классом `battery`. Встроенная строка поиска мгновенно фильтрует список по имени устройства, Entity ID, типу батарейки или **названию комнаты (Area)**. Имеется удобная кнопка быстрой очистки (X).
+* 📑 **Вкладки (Управление дашбордами)**:
+  * **ОБЗОР:** Полный список всех элементов питания с указанием уровня заряда и комнаты.
+  * **ВНИМАНИЕ:** Фильтр проблемных устройств (разряжены, нет связи, давно не обновлялись).
+  * **ТИП:** Инвентаризация — показывает, сколько и каких батареек используется в доме, формирует список покупок и устройств на зарядку.
+  * **РАСХОД:** Аналитика скорости разряда (% в день) на основе даты последней замены.
+  * **ОБСЛУЖИВАНИЕ:** Кнопки для мгновенного обновления даты замены/зарядки прямо из интерфейса карточки (в 1 клик).
+* ⏳ **Зависшие датчики**: Отображение устройств, которые отвалились от сети или давно не присылали данные.
 * 🔠 **Кастомизация**: Возможность изменить размер шрифтов под ваш дашборд.
-* 📦 **Инвентарь**: Общее количество батареек в доме по типам.
 
 ### 🛠 Установка
 **Вариант 1: HACS (Рекомендуется)**
@@ -55,7 +57,7 @@
 
 **Вариант 2: Вручную**
 1. Скопируйте файл `battery-manager-card.js` в `/config/www/battery_manager_card/`.
-2. Добавьте ресурс в настройках: **Настройки -> Панели управления -> Ресурсы**: `/local/battery_manager_card/battery-manager-card.js?v=1.3.0` (Модуль JavaScript).
+2. Добавьте ресурс в настройках: **Настройки -> Панели управления -> Ресурсы**: `/local/battery_manager_card/battery-manager-card.js?v=1.3.5` (Модуль JavaScript).
 
 ---
 
@@ -65,13 +67,15 @@ Modern and interactive custom card for Home Assistant, designed for **[HA-Batter
 
 ### ✨ Features
 * 🖥️ **Full Visual Editor (UI)**: No YAML required! Simply add the card and configure everything directly in the UI.
-* 🔍 **Auto-discovery**: Automatically finds all devices with the `battery` class.
-* 📑 **Tabs**: OVERVIEW (all), ATTENTION (issues), TYPE (inventory), DRAIN (analytics), **MAINTENANCE (quick update of replacement/charging dates)**.
-* 🎨 **New UI & Animations**: Compact MDI icon-based tabs and live CSS charging animations.
-* ⏳ **Stale Device Tracking**: Detects devices that have gone offline and haven't reported data in a while.
-* 📉 **Smart Analytics**: Battery drain rate (% per day) based on replacement date.
+* 🔍 **Search & Auto-discovery**: Automatically displays all devices with the `battery` class. The built-in search bar instantly filters devices by Name, Entity ID, Battery Type, or **Area (Room) name**. Includes a quick-clear (X) button.
+* 📑 **Interactive Tabs (Dashboards)**:
+  * **OVERVIEW:** A complete list of all devices, showing battery levels and assigned areas.
+  * **ATTENTION:** Highlights problematic devices (low battery, offline, or stale data).
+  * **TYPE:** Inventory tracking — shows total batteries by type and generates a shopping/recharge list.
+  * **DRAIN:** Analytics showing battery drain rate (% per day) based on replacement dates.
+  * **MAINTENANCE:** 1-click buttons to quickly update replacement/charging dates directly from the card.
+* ⏳ **Stale Devices**: Displays devices that have gone offline or haven't reported data in a while.
 * 🔠 **Customizable Fonts**: Change font sizes to fit your dashboard perfectly.
-* 📦 **Inventory Tracking**: Total count of all batteries in your home by type.
 
 ### 🛠 Installation
 **Option 1: HACS (Recommended)**
@@ -84,7 +88,7 @@ Modern and interactive custom card for Home Assistant, designed for **[HA-Batter
 
 **Option 2: Manual**
 1. Copy the `battery-manager-card.js` file to `/config/www/battery_manager_card/`.
-2. Add the resource in Settings -> Dashboards -> Resources: `/local/battery_manager_card/battery-manager-card.js?v=1.3.0` (JavaScript Module).
+2. Add the resource in Settings -> Dashboards -> Resources: `/local/battery_manager_card/battery-manager-card.js?v=1.3.5` (JavaScript Module).
 
 ---
 
@@ -94,13 +98,15 @@ Moderne, interaktive benutzerdefinierte Karte für Home Assistant, optimiert fü
 
 ### ✨ Funktionen
 * 🖥️ **Visueller Editor (UI)**: Kein YAML nötig! Alles direkt über die Benutzeroberfläche konfigurieren.
-* 🔍 **Auto-Discovery**: Findet automatisch alle Geräte mit der Klasse `battery`.
-* 📑 **Tabs**: ÜBERSICHT (alle), ACHTUNG (Probleme), TYP (Bestand), VERBRAUCH (Analyse), **WARTUNG (schnelles Aktualisieren der Wechsel-/Ladedaten)**.
-* 🎨 **Neues UI & Animationen**: Kompakte Icon-Tabs und Live-CSS-Ladeanimationen.
-* ⏳ **Erkennung inaktiver Geräte**: Findet Geräte, die offline sind und sich lange nicht gemeldet haben.
-* 📉 **Intelligente Analyse**: Berechnet den täglichen Verbrauch (% pro Tag).
+* 🔍 **Suche & Auto-Discovery**: Zeigt automatisch alle Geräte mit der Klasse `battery` an. Die Suchleiste filtert Geräte sofort nach Name, Entitäts-ID, Batterietyp oder **Raumnamen (Area)**. Inklusive Schnelllöschtaste (X).
+* 📑 **Interaktive Tabs (Dashboards)**:
+  * **ÜBERSICHT:** Liste aller Geräte mit Ladestand und Raumangabe.
+  * **ACHTUNG:** Hebt problematische Geräte hervor (niedriger Ladestand, offline oder keine aktuellen Daten).
+  * **TYP:** Bestandsaufnahme — zeigt Batterien nach Typ und erstellt eine Einkaufs-/Ladeliste.
+  * **VERBRAUCH:** Analyse der Entladegeschwindigkeit (% pro Tag).
+  * **WARTUNG:** 1-Klick-Buttons zum schnellen Aktualisieren der Wechsel-/Ladedaten direkt in der Karte.
+* ⏳ **Inaktive Geräte**: Zeigt Geräte an, die offline sind oder sich lange nicht gemeldet haben.
 * 🔠 **Anpassbare Schriftarten**: Ändern Sie die Schriftgrößen für Ihr Dashboard.
-* 📦 **Bestandsaufnahme**: Gesamtanzahl aller Batterietypen in Ihrem Zuhause.
 
 ### 🛠 Installation
 **Option 1: HACS (Empfohlen)**
@@ -113,7 +119,7 @@ Moderne, interaktive benutzerdefinierte Karte für Home Assistant, optimiert fü
 
 **Option 2: Manuell**
 1. Kopieren Sie `battery-manager-card.js` nach `/config/www/battery_manager_card/`.
-2. Ressource hinzufügen unter Einstellungen -> Dashboards -> Ressourcen: `/local/battery_manager_card/battery-manager-card.js?v=1.3.0` (JavaScript Modul).
+2. Ressource hinzufügen unter Einstellungen -> Dashboards -> Ressourcen: `/local/battery_manager_card/battery-manager-card.js?v=1.3.5` (JavaScript Modul).
 
 ---
 
@@ -123,13 +129,15 @@ Tarjeta interactiva moderna para Home Assistant, diseñada para **[HA-Battery-No
 
 ### ✨ Características
 * 🖥️ **Editor Visual (UI)**: ¡Sin necesidad de YAML! Configure todo directamente en la interfaz.
-* 🔍 **Auto-descubrimiento**: Encuentra dispositivos con la clase `battery`.
-* 📑 **Pestañas**: RESUMEN (todos), ATENCIÓN (problemas), TIPO (inventario), DESCARGA (análisis), **MANTENIMIENTO (actualización rápida de fechas de cambio/carga)**.
-* 🎨 **Nuevo diseño y animaciones**: Pestañas de iconos compactas y animaciones de carga CSS.
-* ⏳ **Dispositivos inactivos**: Detecta dispositivos que se han desconectado y no han enviado datos en mucho tiempo.
-* 📉 **Análisis inteligente**: Consumo diario (% por día).
+* 🔍 **Búsqueda y Auto-descubrimiento**: Muestra automáticamente todos los dispositivos con la clase `battery`. La barra de búsqueda filtra instantáneamente por Nombre, ID de entidad, Tipo de batería o **Nombre del Área (Habitación)**. Incluye botón de borrado rápido (X).
+* 📑 **Pestañas Interactivas (Paneles)**:
+  * **RESUMEN:** Lista completa de dispositivos, mostrando niveles de batería y áreas asignadas.
+  * **ATENCIÓN:** Destaca dispositivos problemáticos (batería baja, sin conexión o datos obsoletos).
+  * **TIPO:** Inventario: muestra el total de baterías por tipo y genera una lista de compras/recargas.
+  * **DESCARGA:** Análisis del consumo diario (% por día).
+  * **MANTENIMIENTO:** Botones de 1 clic para actualizar rápidamente las fechas de cambio/carga directamente en la tarjeta.
+* ⏳ **Dispositivos inactivos**: Muestra dispositivos que se han desconectado o no han enviado datos en mucho tiempo.
 * 🔠 **Fuentes personalizables**: Cambie el tamaño de fuente para nombres y porcentajes.
-* 📦 **Inventario**: Recuento total de baterías por tipo.
 
 ### 🛠 Instalación
 **Opción 1: HACS (Recomendado)**
@@ -142,7 +150,7 @@ Tarjeta interactiva moderna para Home Assistant, diseñada para **[HA-Battery-No
 
 **Opción 2: Manual**
 1. Copie `battery-manager-card.js` a `/config/www/battery_manager_card/`.
-2. Añada el recurso en Ajustes -> Paneles -> Recursos: `/local/battery_manager_card/battery-manager-card.js?v=1.3.0` (Módulo JavaScript).
+2. Añada el recurso en Ajustes -> Paneles -> Recursos: `/local/battery_manager_card/battery-manager-card.js?v=1.3.5` (Módulo JavaScript).
 
 ---
 
@@ -152,13 +160,15 @@ Carte interactive moderne pour Home Assistant, conçue pour **[HA-Battery-Notes]
 
 ### ✨ Fonctionnalités
 * 🖥️ **Éditeur Visuel (UI)**: Pas de YAML requis ! Configurez tout directement dans l'interface.
-* 🔍 **Détection automatique**: Trouve les appareils avec la classe `battery`.
-* 📑 **Onglets**: APERÇU (tous), ATTENTION (problèmes), TYPE (inventaire), DÉCHARGE (analyse), **ENTRETIEN (mise à jour rapide des dates de remplacement/charge)**.
-* 🎨 **Nouveau design et animations**: Onglets d'icônes compacts et animations de charge en direct.
-* ⏳ **Appareils inactifs**: Détecte les appareils hors ligne qui n'ont pas envoyé de données depuis longtemps.
-* 📉 **Analyse intelligente**: Taux de décharge (% par jour).
-* 🔠 **Polices personnalisables**: Modifiez la taille du texte.
-* 📦 **Inventario**: Nombre total de piles par type.
+* 🔍 **Recherche et Détection automatique**: Affiche automatiquement tous les appareils avec la classe `battery`. La barre de recherche filtre instantanément par Nom, ID d'entité, Type de pile ou **Nom de la pièce (Area)**. Inclut un bouton d'effacement rapide (X).
+* 📑 **Onglets Interactifs (Tableaux de bord)**:
+  * **APERÇU:** Liste complète des appareils avec niveau de batterie et pièce attribuée.
+  * **ATTENTION:** Met en évidence les appareils problématiques (batterie faible, hors ligne ou données obsolètes).
+  * **TYPE:** Inventaire — affiche le total par type et génère une liste d'achats/recharges.
+  * **DÉCHARGE:** Analyse du taux de décharge (% par jour).
+  * **ENTRETIEN:** Boutons en 1 clic pour mettre à jour rapidement les dates de remplacement/charge directement depuis la carte.
+* ⏳ **Appareils inactifs**: Affiche les appareils hors ligne ou qui n'ont pas envoyé de données depuis longtemps.
+* 🔠 **Polices personnalisables**: Modifiez la taille du texte pour l'adapter à votre tableau de bord.
 
 ### 🛠 Installation
 **Option 1: HACS (Recommandé)**
@@ -171,4 +181,4 @@ Carte interactive moderne pour Home Assistant, conçue pour **[HA-Battery-Notes]
 
 **Option 2: Manuel**
 1. Copiez `battery-manager-card.js` dans `/config/www/battery_manager_card/`.
-2. Ajoutez la ressource dans Paramètres -> Tableaux de bord -> Ressources: `/local/battery_manager_card/battery-manager-card.js?v=1.3.0` (Module JavaScript).
+2. Ajoutez la ressource dans Paramètres -> Tableaux de bord -> Ressources: `/local/battery_manager_card/battery-manager-card.js?v=1.3.5` (Module JavaScript).
